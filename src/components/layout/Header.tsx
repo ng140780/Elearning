@@ -9,6 +9,7 @@ const navItems = [
   { path: '/learning-paths', label: 'Learning Paths', icon: Route },
   { path: '/bookmarks', label: 'Bookmarks', icon: Bookmark },
   { path: '/history', label: 'History', icon: Clock },
+  { path: '/manage', label: 'Manage Courses', icon: Settings },
 ];
 
 export default function Header() {

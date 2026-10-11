@@ -13,6 +13,7 @@ import Bookmarks from './pages/Bookmarks';
 import History from './pages/History';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
+import CourseManagement from './pages/CourseManagement';
 
 function App() {
   return (
@@ -31,11 +32,11 @@ function App() {
               <Route path="/my-learning" element={<MyLearning />} />
               <Route path="/learning-paths" element={<LearningPaths />} />
               <Route path="/learning-paths/:pathId" element={<LearningPathDetail />} />
-              <Route path="/bookmarks" element={<Bookmarks />} />
-              <Route path="/history" element={<History />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="*" element={<NotFound />} />
-            </Route>
+            <Route path="/bookmarks" element={<Bookmarks />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/manage" element={<CourseManagement />} />
+            <Route path="*" element={<NotFound />} />            </Route>
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

@@ -1,6 +1,7 @@
 import { contentManifest } from '../content/manifest';
 import { Course, LearningPath, Subject, LearningUnitId, Lesson, Module } from '../types';
 import { validateContent } from './validation';
+import { getCourses as getEditableCourses, getCourse as getEditableCourse } from './courseManagement';
 
 // Validate content on load
 const validationResult = validateContent();
@@ -25,31 +26,32 @@ if (validationResult.warnings.length > 0) {
 
 /** Get all courses */
 export function getAllCourses(): Course[] {
-  return [...contentManifest.courses].sort((a, b) => a.order - b.order);
+  // Use editable courses (from localStorage or default)
+  return [...getEditableCourses()].sort((a, b) => a.order - b.order);
 }
 
 /** Get a course by ID */
 export function getCourseById(id: LearningUnitId): Course | undefined {
-  return contentManifest.courses.find(c => c.id === id);
+  return getEditableCourse(id);
 }
 
 /** Get courses by subject */
 export function getCoursesBySubject(subjectId: string): Course[] {
-  return contentManifest.courses.filter(
-    c => c.subject === subjectId || c.subjects?.includes(subjectId)
+  return getEditableCourses().filter(
+    (c: Course) => c.subject === subjectId || c.subjects?.includes(subjectId)
   );
 }
 
 /** Get courses by difficulty */
 export function getCoursesByDifficulty(difficulty: string): Course[] {
-  return contentManifest.courses.filter(c => c.difficulty === difficulty);
+  return getEditableCourses().filter((c: Course) => c.difficulty === difficulty);
 }
 
 /** Search courses by title or description */
 export function searchCourses(query: string): Course[] {
   const q = query.toLowerCase().trim();
   if (!q) return getAllCourses();
-  return contentManifest.courses.filter(c =>
+  return getEditableCourses().filter((c: Course) =>
     c.title.toLowerCase().includes(q) ||
     c.description?.toLowerCase().includes(q) ||
     c.subject.toLowerCase().includes(q) ||
@@ -62,8 +64,8 @@ export function getAllSubjects(): Subject[] {
   const subjects = contentManifest.subjects;
   return subjects.map(s => ({
     ...s,
-    courseCount: contentManifest.courses.filter(
-      c => c.subject === s.id || c.subjects?.includes(s.id)
+    courseCount: getEditableCourses().filter(
+      (c: Course) => c.subject === s.id || c.subjects?.includes(s.id)
     ).length,
   }));
 }
