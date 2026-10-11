@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit2, Trash2, GraduationCap, AlertTriangle } from 'lucide-react';
-import { getPrograms, addProgram, updateProgram, deleteProgram, addCourseToProgram, removeCourseFromProgram } from '../services/programManagement';
+import { getPrograms, addProgram, updateProgram, deleteProgram, addCourseToProgram, removeCourseFromProgram, updateCourseInProgram } from '../services/programManagement';
 import { getCourses } from '../services/courseManagement';
 import type { Program, ProgramCourse } from '../types';
 
@@ -12,6 +12,7 @@ export default function ProgramManagement() {
   const [showAddProgram, setShowAddProgram] = useState(false);
   const [editingProgram, setEditingProgram] = useState<Program | null>(null);
   const [showAddCourse, setShowAddCourse] = useState(false);
+  const [editingCourse, setEditingCourse] = useState<ProgramCourse | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<{ type: string; id: string; name: string } | null>(null);
   
   // Program form states
@@ -133,6 +134,27 @@ export default function ProgramManagement() {
 
   const handleDeleteCourse = (courseId: string, courseName: string) => {
     setShowDeleteConfirm({ type: 'course', id: courseId, name: courseName });
+  };
+
+  const handleUpdateCourse = () => {
+    if (!selectedProgram || !editingCourse) return;
+    
+    updateCourseInProgram(selectedProgram.id, editingCourse.courseId, {
+      credits: courseCredits,
+      required: courseRequired,
+      year: courseYear,
+      semester: courseSemester,
+      prerequisites: coursePrerequisites,
+    });
+    
+    setEditingCourse(null);
+    setSelectedCourseId('');
+    setCourseCredits(10);
+    setCourseRequired(true);
+    setCourseYear(undefined);
+    setCourseSemester(undefined);
+    setCoursePrerequisites([]);
+    refreshPrograms();
   };
 
   const levelLabels = {
@@ -275,13 +297,29 @@ export default function ProgramManagement() {
                                 </div>
                               </div>
                             </div>
-                            <button
-                              onClick={() => handleDeleteCourse(pc.courseId, course?.title || pc.courseId)}
-                              className="p-1.5 text-surface-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                              title="Remove course"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <div className="flex items-center gap-1">
+                              <button
+                                onClick={() => {
+                                  setEditingCourse(pc);
+                                  setCourseCredits(pc.credits);
+                                  setCourseRequired(pc.required);
+                                  setCourseYear(pc.year);
+                                  setCourseSemester(pc.semester);
+                                  setCoursePrerequisites(pc.prerequisites || []);
+                                }}
+                                className="p-1.5 text-surface-500 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors"
+                                title="Edit course"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteCourse(pc.courseId, course?.title || pc.courseId)}
+                                className="p-1.5 text-surface-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                                title="Remove course"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
                         );
                       })}
@@ -569,6 +607,106 @@ export default function ProgramManagement() {
               <button
                 onClick={() => {
                   setShowAddCourse(false);
+                  setSelectedCourseId('');
+                  setCourseCredits(10);
+                  setCourseRequired(true);
+                  setCourseYear(undefined);
+                  setCourseSemester(undefined);
+                  setCoursePrerequisites([]);
+                }}
+                className="flex-1 px-4 py-2 bg-surface-200 text-surface-700 rounded-lg font-medium hover:bg-surface-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Course Modal */}
+      {editingCourse && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-bold text-surface-900 mb-4">
+              Edit Course: {courses.find(c => c.id === editingCourse.courseId)?.title}
+            </h3>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Credits</label>
+                <input
+                  type="number"
+                  value={courseCredits}
+                  onChange={(e) => setCourseCredits(Number(e.target.value))}
+                  min="1"
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+              <div>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={courseRequired}
+                    onChange={(e) => setCourseRequired(e.target.checked)}
+                    className="rounded"
+                  />
+                  <span className="text-sm font-medium text-surface-700">Required course</span>
+                </label>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Year (optional)</label>
+                <input
+                  type="number"
+                  value={courseYear || ''}
+                  onChange={(e) => setCourseYear(e.target.value ? Number(e.target.value) : undefined)}
+                  min="1"
+                  placeholder="e.g., 1, 2, 3"
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Semester (optional)</label>
+                <select
+                  value={courseSemester || ''}
+                  onChange={(e) => setCourseSemester(e.target.value as any || undefined)}
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="">None</option>
+                  <option value="fall">Fall</option>
+                  <option value="spring">Spring</option>
+                  <option value="summer">Summer</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Prerequisites (optional)</label>
+                <select
+                  multiple
+                  value={coursePrerequisites}
+                  onChange={(e) => setCoursePrerequisites(Array.from(e.target.selectedOptions, option => option.value))}
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  size={4}
+                >
+                  {selectedProgram?.courses
+                    ?.filter(pc => pc.courseId !== editingCourse.courseId)
+                    .map(pc => {
+                      const course = courses.find(c => c.id === pc.courseId);
+                      return course ? (
+                        <option key={course.id} value={course.id}>{course.title}</option>
+                      ) : null;
+                    })}
+                </select>
+                <p className="text-xs text-surface-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={handleUpdateCourse}
+                className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700"
+              >
+                Save Changes
+              </button>
+              <button
+                onClick={() => {
+                  setEditingCourse(null);
                   setSelectedCourseId('');
                   setCourseCredits(10);
                   setCourseRequired(true);

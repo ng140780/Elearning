@@ -128,6 +128,23 @@ export function removeCourseFromProgram(programId: string, courseId: string): bo
   return true;
 }
 
+/** Update a course in a program */
+export function updateCourseInProgram(
+  programId: string, 
+  courseId: string, 
+  updates: Partial<ProgramCourse>
+): ProgramCourse | null {
+  const program = getProgram(programId);
+  if (!program || !program.courses) return null;
+  
+  const index = program.courses.findIndex(pc => pc.courseId === courseId);
+  if (index === -1) return null;
+  
+  program.courses[index] = { ...program.courses[index], ...updates };
+  saveManifest();
+  return program.courses[index];
+}
+
 /** Reset to default manifest */
 export function resetProgramsToDefault() {
   editableManifest = JSON.parse(JSON.stringify(contentManifest));
