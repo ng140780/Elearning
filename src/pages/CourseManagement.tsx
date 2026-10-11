@@ -9,11 +9,20 @@ export default function CourseManagement() {
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [editingModule, setEditingModule] = useState<Module | null>(null);
   const [editingLesson, setEditingLesson] = useState<{ moduleId: string; lesson: Lesson } | null>(null);
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [showAddModule, setShowAddModule] = useState(false);
   const [showAddLesson, setShowAddLesson] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<{ type: string; id: string; name: string } | null>(null);
   
-  // Form states
+  // Course form states
+  const [showAddCourse, setShowAddCourse] = useState(false);
+  const [courseTitle, setCourseTitle] = useState('');
+  const [courseDescription, setCourseDescription] = useState('');
+  const [courseSubject, setCourseSubject] = useState('computer-science');
+  const [courseDifficulty, setCourseDifficulty] = useState<'beginner' | 'intermediate' | 'advanced' | 'expert'>('beginner');
+  const [courseHours, setCourseHours] = useState(10);
+  
+  // Module/Lesson form states
   const [moduleTitle, setModuleTitle] = useState('');
   const [moduleDescription, setModuleDescription] = useState('');
   const [lessonTitle, setLessonTitle] = useState('');
@@ -30,6 +39,78 @@ export default function CourseManagement() {
       const updated = getCourses().find(c => c.id === selectedCourse.id);
       setSelectedCourse(updated || null);
     }
+  };
+
+  // Course operations
+  const handleAddCourse = () => {
+    if (!courseTitle.trim()) return;
+    
+    addCourse({
+      type: 'course',
+      title: courseTitle,
+      description: courseDescription,
+      subject: courseSubject,
+      difficulty: courseDifficulty,
+      estimatedHours: courseHours,
+      provider: 'LearnHub',
+      order: courses.length + 1,
+      modules: [],
+    });
+    
+    setCourseTitle('');
+    setCourseDescription('');
+    setCourseSubject('computer-science');
+    setCourseDifficulty('beginner');
+    setCourseHours(10);
+    setShowAddCourse(false);
+    refreshCourses();
+  };
+
+  const handleUpdateCourse = () => {
+    if (!editingCourse || !courseTitle.trim()) return;
+    
+    updateCourse(editingCourse.id, {
+      title: courseTitle,
+      description: courseDescription,
+      subject: courseSubject,
+      difficulty: courseDifficulty,
+      estimatedHours: courseHours,
+    });
+    
+    setEditingCourse(null);
+    setCourseTitle('');
+    setCourseDescription('');
+    setCourseSubject('computer-science');
+    setCourseDifficulty('beginner');
+    setCourseHours(10);
+    refreshCourses();
+  };
+
+  const handleDeleteCourse = (courseId: string, courseName: string) => {
+    setShowDeleteConfirm({ type: 'course', id: courseId, name: courseName });
+  };
+
+  const confirmDelete = () => {
+    if (!showDeleteConfirm) return;
+    
+    if (showDeleteConfirm.type === 'course') {
+      deleteCourse(showDeleteConfirm.id);
+      if (selectedCourse?.id === showDeleteConfirm.id) {
+        setSelectedCourse(null);
+      }
+    } else if (showDeleteConfirm.type === 'module' && selectedCourse) {
+      deleteModule(selectedCourse.id, showDeleteConfirm.id);
+    } else if (showDeleteConfirm.type === 'lesson' && selectedCourse) {
+      const module = selectedCourse.modules?.find(m => 
+        m.lessons?.some(l => l.id === showDeleteConfirm.id)
+      );
+      if (module) {
+        deleteLesson(selectedCourse.id, module.id, showDeleteConfirm.id);
+      }
+    }
+    
+    setShowDeleteConfirm(null);
+    refreshCourses();
   };
 
   // Module operations
@@ -66,20 +147,6 @@ export default function CourseManagement() {
   const handleDeleteModule = (moduleId: string, moduleName: string) => {
     if (!selectedCourse) return;
     setShowDeleteConfirm({ type: 'module', id: moduleId, name: moduleName });
-  };
-
-  const confirmDelete = () => {
-    if (!showDeleteConfirm || !selectedCourse) return;
-    
-    if (showDeleteConfirm.type === 'module') {
-      deleteModule(selectedCourse.id, showDeleteConfirm.id);
-    } else if (showDeleteConfirm.type === 'lesson' && editingLesson) {
-      deleteLesson(selectedCourse.id, editingLesson.moduleId, showDeleteConfirm.id);
-      setEditingLesson(null);
-    }
-    
-    setShowDeleteConfirm(null);
-    refreshCourses();
   };
 
   // Lesson operations
@@ -141,23 +208,63 @@ export default function CourseManagement() {
         {/* Course List */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-xl border border-surface-200 p-4">
-            <h2 className="font-semibold text-surface-900 mb-4">Courses</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-semibold text-surface-900">Courses</h2>
+              <button
+                onClick={() => setShowAddCourse(true)}
+                className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary-600 text-white rounded-lg text-xs font-medium hover:bg-primary-700 transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Add Course
+              </button>
+            </div>
             <div className="space-y-2">
               {courses.map(course => (
-                <button
+                <div
                   key={course.id}
-                  onClick={() => setSelectedCourse(course)}
-                  className={`w-full text-left p-3 rounded-lg transition-colors ${
+                  className={`group relative p-3 rounded-lg transition-colors ${
                     selectedCourse?.id === course.id
                       ? 'bg-primary-50 border border-primary-200 text-primary-700'
                       : 'hover:bg-surface-50 border border-transparent'
                   }`}
                 >
-                  <p className="font-medium text-sm">{course.title}</p>
-                  <p className="text-xs text-surface-500 mt-1">
-                    {course.modules?.length || 0} modules
-                  </p>
-                </button>
+                  <button
+                    onClick={() => setSelectedCourse(course)}
+                    className="w-full text-left"
+                  >
+                    <p className="font-medium text-sm">{course.title}</p>
+                    <p className="text-xs text-surface-500 mt-1">
+                      {course.modules?.length || 0} modules
+                    </p>
+                  </button>
+                  <div className="absolute right-2 top-2 hidden group-hover:flex gap-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingCourse(course);
+                        setCourseTitle(course.title);
+                        setCourseDescription(course.description || '');
+                        setCourseSubject(course.subject);
+                        setCourseDifficulty(course.difficulty || 'beginner');
+                        setCourseHours(course.estimatedHours || 10);
+                      }}
+                      className="p-1 text-surface-500 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors"
+                      title="Edit course"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteCourse(course.id, course.title);
+                      }}
+                      className="p-1 text-surface-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                      title="Delete course"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -320,6 +427,190 @@ export default function CourseManagement() {
         </div>
       </div>
 
+      {/* Add Course Modal */}
+      {showAddCourse && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-bold text-surface-900 mb-4">Add New Course</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Course Title *</label>
+                <input
+                  type="text"
+                  value={courseTitle}
+                  onChange={(e) => setCourseTitle(e.target.value)}
+                  placeholder="e.g., Introduction to Python"
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Description</label>
+                <textarea
+                  value={courseDescription}
+                  onChange={(e) => setCourseDescription(e.target.value)}
+                  placeholder="Brief description of the course..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Subject</label>
+                <select
+                  value={courseSubject}
+                  onChange={(e) => setCourseSubject(e.target.value)}
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="computer-science">Computer Science</option>
+                  <option value="mathematics">Mathematics</option>
+                  <option value="data-science">Data Science</option>
+                  <option value="web-development">Web Development</option>
+                  <option value="design">Design</option>
+                  <option value="business">Business</option>
+                  <option value="humanities">Humanities</option>
+                  <option value="natural-sciences">Natural Sciences</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Difficulty</label>
+                <select
+                  value={courseDifficulty}
+                  onChange={(e) => setCourseDifficulty(e.target.value as any)}
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Estimated Hours</label>
+                <input
+                  type="number"
+                  value={courseHours}
+                  onChange={(e) => setCourseHours(Number(e.target.value))}
+                  min="1"
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={handleAddCourse}
+                className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700"
+              >
+                Add Course
+              </button>
+              <button
+                onClick={() => {
+                  setShowAddCourse(false);
+                  setCourseTitle('');
+                  setCourseDescription('');
+                  setCourseSubject('computer-science');
+                  setCourseDifficulty('beginner');
+                  setCourseHours(10);
+                }}
+                className="flex-1 px-4 py-2 bg-surface-200 text-surface-700 rounded-lg font-medium hover:bg-surface-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Course Modal */}
+      {editingCourse && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-bold text-surface-900 mb-4">Edit Course</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Course Title *</label>
+                <input
+                  type="text"
+                  value={courseTitle}
+                  onChange={(e) => setCourseTitle(e.target.value)}
+                  placeholder="e.g., Introduction to Python"
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Description</label>
+                <textarea
+                  value={courseDescription}
+                  onChange={(e) => setCourseDescription(e.target.value)}
+                  placeholder="Brief description of the course..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Subject</label>
+                <select
+                  value={courseSubject}
+                  onChange={(e) => setCourseSubject(e.target.value)}
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="computer-science">Computer Science</option>
+                  <option value="mathematics">Mathematics</option>
+                  <option value="data-science">Data Science</option>
+                  <option value="web-development">Web Development</option>
+                  <option value="design">Design</option>
+                  <option value="business">Business</option>
+                  <option value="humanities">Humanities</option>
+                  <option value="natural-sciences">Natural Sciences</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Difficulty</label>
+                <select
+                  value={courseDifficulty}
+                  onChange={(e) => setCourseDifficulty(e.target.value as any)}
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1">Estimated Hours</label>
+                <input
+                  type="number"
+                  value={courseHours}
+                  onChange={(e) => setCourseHours(Number(e.target.value))}
+                  min="1"
+                  className="w-full px-3 py-2 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={handleUpdateCourse}
+                className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700"
+              >
+                Save Changes
+              </button>
+              <button
+                onClick={() => {
+                  setEditingCourse(null);
+                  setCourseTitle('');
+                  setCourseDescription('');
+                  setCourseSubject('computer-science');
+                  setCourseDifficulty('beginner');
+                  setCourseHours(10);
+                }}
+                className="flex-1 px-4 py-2 bg-surface-200 text-surface-700 rounded-lg font-medium hover:bg-surface-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Add Module Modal */}
       {showAddModule && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -473,6 +764,11 @@ export default function CourseManagement() {
             <p className="text-surface-600 mb-2">
               Are you sure you want to delete <strong>{showDeleteConfirm.name}</strong>?
             </p>
+            {showDeleteConfirm.type === 'course' && (
+              <p className="text-red-600 text-sm font-medium mb-4">
+                ⚠️ This will delete the entire course including all modules, lessons, and their progress data.
+              </p>
+            )}
             {showDeleteConfirm.type === 'module' && (
               <p className="text-red-600 text-sm font-medium mb-4">
                 ⚠️ This will also delete all lessons under this module and their progress data.
