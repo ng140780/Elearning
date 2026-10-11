@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { GraduationCap, Clock, BookOpen, ArrowRight, Award, Settings } from 'lucide-react';
-import { getAllPrograms, getProgramProgress } from '../services/content';
+import { getAllPrograms, getProgramProgress, getCourseById } from '../services/content';
 import { useLearner } from '../context/LearnerContext';
 import ProgressBar from '../components/ui/ProgressBar';
 import EmptyState from '../components/ui/EmptyState';
@@ -122,17 +122,20 @@ export default function Programs() {
                   {program.courses.length <= 3 ? 'Courses' : `First ${Math.min(3, program.courses.length)} of ${program.courses.length} courses`}
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {program.courses.slice(0, 3).map((pc, index) => (
-                    <span key={pc.courseId} className="inline-flex items-center gap-1 px-3 py-1.5 bg-white rounded-lg border border-surface-200 text-xs">
-                      <span className="text-surface-400">{index + 1}.</span>
-                      <span className="text-surface-700">{pc.courseId}</span>
-                      {pc.required ? (
-                        <span className="text-primary-600 ml-1">•</span>
-                      ) : (
-                        <span className="text-surface-400 ml-1">(elective)</span>
-                      )}
-                    </span>
-                  ))}
+                  {program.courses.slice(0, 3).map((pc, index) => {
+                    const course = getCourseById(pc.courseId);
+                    return (
+                      <span key={pc.courseId} className="inline-flex items-center gap-1 px-3 py-1.5 bg-white rounded-lg border border-surface-200 text-xs">
+                        <span className="text-surface-400">{index + 1}.</span>
+                        <span className="text-surface-700">{course?.title || pc.courseId}</span>
+                        {pc.required ? (
+                          <span className="text-primary-600 ml-1">•</span>
+                        ) : (
+                          <span className="text-surface-400 ml-1">(elective)</span>
+                        )}
+                      </span>
+                    );
+                  })}
                   {program.courses.length > 3 && (
                     <span className="inline-flex items-center px-3 py-1.5 text-xs text-surface-500">
                       +{program.courses.length - 3} more
