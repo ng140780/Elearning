@@ -255,7 +255,7 @@ export default function LearningEnvironment() {
                   onClick={handleToggleComplete}
                   className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-colors ${
                     completed
-                      ? 'bg-accent-50 text-accent-700 border border-accent-200 hover:bg-accent-100'
+                      ? 'bg-accent-100 text-accent-800 border border-accent-300 hover:bg-accent-200'
                       : 'bg-primary-600 text-white hover:bg-primary-700'
                   }`}
                 >
