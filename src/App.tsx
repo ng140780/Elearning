@@ -7,6 +7,7 @@ import ExploreCourses from './pages/ExploreCourses';
 import CourseDetails from './pages/CourseDetails';
 import MyLearning from './pages/MyLearning';
 import LearningEnvironment from './pages/LearningEnvironment';
+import QuizTaking from './pages/QuizTaking';
 import LearningPaths from './pages/LearningPaths';
 import LearningPathDetail from './pages/LearningPathDetail';
 import LearningPathManagement from './pages/LearningPathManagement';
@@ -15,6 +16,7 @@ import ProgramDetail from './pages/ProgramDetail';
 import ProgramManagement from './pages/ProgramManagement';
 import Bookmarks from './pages/Bookmarks';
 import History from './pages/History';
+import QuizHistory from './pages/QuizHistory';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
 import CourseManagement from './pages/CourseManagement';
@@ -28,6 +30,7 @@ function App() {
           <Routes>
             {/* Learning environment has its own layout (no header/footer) */}
             <Route path="/learn/:courseId/:lessonId" element={<LearningEnvironment />} />
+            <Route path="/quiz/:courseId/:lessonId" element={<QuizTaking />} />
             
             {/* All other pages use the main layout */}
             <Route element={<Layout />}>
@@ -42,6 +45,7 @@ function App() {
               <Route path="/manage-programs" element={<ProgramManagement />} />
               <Route path="/manage-learning-paths" element={<LearningPathManagement />} />
               <Route path="/manage-subjects" element={<SubjectManagement />} />
+              <Route path="/quiz-history" element={<QuizHistory />} />
               <Route path="/bookmarks" element={<Bookmarks />} />
               <Route path="/history" element={<History />} />
               <Route path="/settings" element={<Settings />} />

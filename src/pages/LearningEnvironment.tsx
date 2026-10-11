@@ -28,6 +28,11 @@ export default function LearningEnvironment() {
         title: context?.lesson.title || 'Lesson',
         description: course.title,
       });
+      
+      // Redirect to quiz interface if this is a quiz lesson
+      if (context?.lesson.contentType === 'quiz') {
+        navigate(`/quiz/${courseId}/${lessonId}`, { replace: true });
+      }
     }
     window.scrollTo(0, 0);
   }, [courseId, lessonId]);
@@ -240,7 +245,25 @@ export default function LearningEnvironment() {
 
             {/* Lesson Content */}
             <article className="lesson-content">
-              {lesson.content ? renderContent(lesson.content) : (
+              {lesson.contentType === 'quiz' ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <BookOpen className="w-8 h-8 text-primary-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-surface-900 mb-2">Ready to test your knowledge?</h2>
+                  <p className="text-surface-600 mb-6">
+                    This lesson contains {lesson.quizQuestions?.length || 0} quiz questions.
+                  </p>
+                  <button
+                    onClick={() => navigate(`/quiz/${courseId}/${lessonId}`)}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+                  >
+                    Start Quiz
+                  </button>
+                </div>
+              ) : lesson.content ? (
+                renderContent(lesson.content)
+              ) : (
                 <div className="text-center py-12">
                   <BookOpen className="w-12 h-12 text-surface-300 mx-auto mb-4" />
                   <p className="text-surface-500">Lesson content will be available soon.</p>
