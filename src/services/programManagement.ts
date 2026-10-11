@@ -21,15 +21,33 @@ function loadManifest() {
   const stored = localStorage.getItem('learnhub_manifest');
   if (stored) {
     try {
-      editableManifest = JSON.parse(stored);
-      // Ensure programs array exists
-      if (!editableManifest.programs) {
-        editableManifest.programs = [];
-      }
+      const parsed = JSON.parse(stored);
+      // Merge with default manifest to ensure new programs are included
+      editableManifest = {
+        ...contentManifest,
+        ...parsed,
+        // Ensure we have all default programs plus any user-added ones
+        programs: mergePrograms(contentManifest.programs || [], parsed.programs || []),
+      };
     } catch {
       editableManifest = JSON.parse(JSON.stringify(contentManifest));
     }
   }
+}
+
+/** Merge default programs with user-added programs */
+function mergePrograms(defaultPrograms: Program[], userPrograms: Program[]): Program[] {
+  const merged = [...defaultPrograms];
+  const defaultIds = new Set(defaultPrograms.map(p => p.id));
+  
+  // Add user programs that don't exist in defaults
+  userPrograms.forEach(userProgram => {
+    if (!defaultIds.has(userProgram.id)) {
+      merged.push(userProgram);
+    }
+  });
+  
+  return merged;
 }
 
 // Load on initialization

@@ -21,11 +21,49 @@ function loadManifest() {
   const stored = localStorage.getItem('learnhub_manifest');
   if (stored) {
     try {
-      editableManifest = JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // Merge with default manifest to ensure new courses are included
+      editableManifest = {
+        ...contentManifest,
+        ...parsed,
+        // Ensure we have all default courses plus any user-added ones
+        courses: mergeCourses(contentManifest.courses || [], parsed.courses || []),
+        programs: mergePrograms(contentManifest.programs || [], parsed.programs || []),
+      };
     } catch {
       editableManifest = JSON.parse(JSON.stringify(contentManifest));
     }
   }
+}
+
+/** Merge default courses with user-added courses */
+function mergeCourses(defaultCourses: Course[], userCourses: Course[]): Course[] {
+  const merged = [...defaultCourses];
+  const defaultIds = new Set(defaultCourses.map(c => c.id));
+  
+  // Add user courses that don't exist in defaults
+  userCourses.forEach(userCourse => {
+    if (!defaultIds.has(userCourse.id)) {
+      merged.push(userCourse);
+    }
+  });
+  
+  return merged;
+}
+
+/** Merge default programs with user-added programs */
+function mergePrograms(defaultPrograms: any[], userPrograms: any[]): any[] {
+  const merged = [...defaultPrograms];
+  const defaultIds = new Set(defaultPrograms.map(p => p.id));
+  
+  // Add user programs that don't exist in defaults
+  userPrograms.forEach(userProgram => {
+    if (!defaultIds.has(userProgram.id)) {
+      merged.push(userProgram);
+    }
+  });
+  
+  return merged;
 }
 
 // Load on initialization
