@@ -1,5 +1,6 @@
 import { ContentManifest } from '../types';
 import { uolBscCsCourses } from './uol-bsc-cs';
+import { bscComputerScienceCurriculum } from './bsc-computer-science-curriculum';
 
 /**
  * Content Manifest - Central registry for all learning content
@@ -85,6 +86,56 @@ export const contentManifest: ContentManifest = {
         // Additional courses would be added here
       ],
       order: 2,
+    },
+    {
+      id: 'comprehensive-bsc-cs',
+      type: 'program',
+      title: 'Comprehensive BSc Computer Science (3-Year)',
+      description: 'A complete 3-year BSc Computer Science program covering computing foundations, software development, full-stack engineering, mobile development, applied AI, and cloud computing. Progression from fundamentals to advanced systems with hands-on projects each year.',
+      level: 'bachelor',
+      totalCredits: 360,
+      estimatedDuration: '3 years',
+      objectives: [
+        'Master programming fundamentals and computer science theory',
+        'Build full-stack web and mobile applications',
+        'Apply software engineering best practices',
+        'Implement secure, scalable systems',
+        'Integrate AI into real-world applications',
+        'Deploy production-ready software to the cloud',
+        'Complete a substantial independent final project',
+      ],
+      prerequisites: [],
+      courses: [
+        // Year 1 - Computing Foundations (120 credits)
+        { courseId: 'y1-01-programming-fundamentals', year: 1, semester: 'fall', credits: 15, required: true, order: 1 },
+        { courseId: 'y1-02-cs-mathematics', year: 1, semester: 'fall', credits: 15, required: true, order: 2 },
+        { courseId: 'y1-03-computer-systems', year: 1, semester: 'fall', credits: 15, required: true, order: 3 },
+        { courseId: 'y1-04-dsa-1', year: 1, semester: 'spring', credits: 15, required: true, order: 4, prerequisites: ['y1-01-programming-fundamentals'] },
+        { courseId: 'y1-05-web-dev-1', year: 1, semester: 'spring', credits: 15, required: true, order: 5 },
+        { courseId: 'y1-06-databases-1', year: 1, semester: 'spring', credits: 15, required: true, order: 6 },
+        { courseId: 'y1-07-software-practice', year: 1, semester: 'spring', credits: 15, required: true, order: 7 },
+        { courseId: 'y1-08-networks', year: 1, semester: 'spring', credits: 15, required: true, order: 8 },
+        
+        // Year 2 - Software & Full-Stack Development (120 credits)
+        { courseId: 'y2-01-advanced-programming', year: 2, semester: 'fall', credits: 15, required: true, order: 9, prerequisites: ['y1-01-programming-fundamentals'] },
+        { courseId: 'y2-02-dsa-2', year: 2, semester: 'fall', credits: 15, required: true, order: 10, prerequisites: ['y1-04-dsa-1'] },
+        { courseId: 'y2-03-fullstack-web', year: 2, semester: 'fall', credits: 15, required: true, order: 11, prerequisites: ['y1-05-web-dev-1', 'y1-06-databases-1'] },
+        { courseId: 'y2-04-databases-2', year: 2, semester: 'fall', credits: 15, required: true, order: 12, prerequisites: ['y1-06-databases-1'] },
+        { courseId: 'y2-05-software-engineering', year: 2, semester: 'spring', credits: 15, required: true, order: 13, prerequisites: ['y1-07-software-practice'] },
+        { courseId: 'y2-06-cybersecurity', year: 2, semester: 'spring', credits: 15, required: true, order: 14, prerequisites: ['y1-08-networks'] },
+        { courseId: 'y2-07-hci-ux', year: 2, semester: 'spring', credits: 15, required: true, order: 15, prerequisites: ['y1-05-web-dev-1'] },
+        { courseId: 'y2-08-mobile-dev-1', year: 2, semester: 'spring', credits: 15, required: true, order: 16, prerequisites: ['y2-03-fullstack-web'] },
+        
+        // Year 3 - Advanced Web, Mobile & Applied AI (120 credits)
+        { courseId: 'y3-01-advanced-web', year: 3, semester: 'fall', credits: 15, required: true, order: 17, prerequisites: ['y2-03-fullstack-web'] },
+        { courseId: 'y3-02-advanced-mobile', year: 3, semester: 'fall', credits: 15, required: true, order: 18, prerequisites: ['y2-08-mobile-dev-1'] },
+        { courseId: 'y3-03-applied-ai', year: 3, semester: 'fall', credits: 15, required: true, order: 19, prerequisites: ['y2-03-fullstack-web'] },
+        { courseId: 'y3-04-cloud-devops', year: 3, semester: 'spring', credits: 15, required: true, order: 20, prerequisites: ['y2-05-software-engineering'] },
+        { courseId: 'y3-05-advanced-computing', year: 3, semester: 'spring', credits: 15, required: true, order: 21, prerequisites: ['y2-06-cybersecurity'] },
+        { courseId: 'y3-06-integrated-product', year: 3, semester: 'spring', credits: 15, required: true, order: 22, prerequisites: ['y3-01-advanced-web', 'y3-02-advanced-mobile'] },
+        { courseId: 'y3-07-final-project', year: 3, semester: 'spring', credits: 30, required: true, order: 23, prerequisites: ['y3-06-integrated-product'] },
+      ],
+      order: 3,
     },
   ],
   subjects: [
@@ -476,6 +527,8 @@ export const contentManifest: ContentManifest = {
     },
     // University of London BSc Computer Science Courses
     ...uolBscCsCourses,
+    // New Comprehensive BSc Computer Science Curriculum
+    ...bscComputerScienceCurriculum,
   ],
   learningPaths: [
     {
