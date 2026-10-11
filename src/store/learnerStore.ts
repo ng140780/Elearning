@@ -1,5 +1,6 @@
 import type { LearnerState, LearnerSettings, Bookmark, HistoryEntry, LearningUnitId } from '../types';
 import * as persistence from '../services/persistence';
+import { resetToDefault as resetManifest } from '../services/courseManagement';
 
 // ============================================================
 // Learner Store - Module-level state management
@@ -123,6 +124,7 @@ export const learnerStore = {
 
   clearData() {
     persistence.clearAllData();
+    resetManifest();
     currentState = { ...DEFAULT_STATE };
     notify();
   },

@@ -236,5 +236,4 @@ export function deleteLesson(courseId: LearningUnitId, moduleId: LearningUnitId,
 export function resetToDefault() {
   editableManifest = JSON.parse(JSON.stringify(contentManifest));
   localStorage.removeItem('learnhub_manifest');
-  saveManifest();
 }
