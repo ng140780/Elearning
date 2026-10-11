@@ -2,6 +2,7 @@ import { contentManifest } from '../content/manifest';
 import { Course, LearningPath, Subject, LearningUnitId, Lesson, Module, Program } from '../types';
 import { validateContent } from './validation';
 import { getCourses as getEditableCourses, getCourse as getEditableCourse } from './courseManagement';
+import { getPrograms as getEditablePrograms, getProgram as getEditableProgram } from './programManagement';
 
 // Validate content on load
 const validationResult = validateContent();
@@ -151,12 +152,12 @@ export function getUniqueDifficulties(): string[] {
 
 /** Get all programs */
 export function getAllPrograms(): Program[] {
-  return [...contentManifest.programs].sort((a, b) => a.order - b.order);
+  return [...getEditablePrograms()].sort((a, b) => a.order - b.order);
 }
 
 /** Get a program by ID */
 export function getProgramById(id: string): Program | undefined {
-  return contentManifest.programs.find(p => p.id === id);
+  return getEditableProgram(id);
 }
 
 /** Get courses in a program with full course details */

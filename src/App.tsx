@@ -11,6 +11,7 @@ import LearningPaths from './pages/LearningPaths';
 import LearningPathDetail from './pages/LearningPathDetail';
 import Programs from './pages/Programs';
 import ProgramDetail from './pages/ProgramDetail';
+import ProgramManagement from './pages/ProgramManagement';
 import Bookmarks from './pages/Bookmarks';
 import History from './pages/History';
 import Settings from './pages/Settings';
@@ -36,6 +37,7 @@ function App() {
               <Route path="/learning-paths/:pathId" element={<LearningPathDetail />} />
               <Route path="/programs" element={<Programs />} />
               <Route path="/programs/:programId" element={<ProgramDetail />} />
+              <Route path="/manage-programs" element={<ProgramManagement />} />
               <Route path="/bookmarks" element={<Bookmarks />} />
               <Route path="/history" element={<History />} />
               <Route path="/settings" element={<Settings />} />
