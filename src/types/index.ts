@@ -44,6 +44,9 @@ export interface LearningUnit {
   parentId?: LearningUnitId;
   metadata?: Record<string, unknown>;
   order: number;
+  credits?: number; // For academic credits
+  year?: number; // For year-based programs (1, 2, 3, 4)
+  semester?: 'fall' | 'spring' | 'summer'; // For semester-based programs
 }
 
 /** Extended course information */
@@ -58,6 +61,36 @@ export interface Course extends LearningUnit {
   learningObjectives?: string[];
   prerequisites?: string[];
   modules?: Module[];
+  credits?: number;
+  year?: number;
+  semester?: 'fall' | 'spring' | 'summer';
+}
+
+/** A program that structures multiple courses (e.g., BSc degree, certification) */
+export interface Program {
+  id: string;
+  type: 'program';
+  title: string;
+  description: string;
+  thumbnail?: string;
+  level: 'certificate' | 'diploma' | 'bachelor' | 'master' | 'professional';
+  totalCredits?: number;
+  estimatedDuration?: string; // e.g., "3 years", "6 months"
+  courses: ProgramCourse[]; // Structured list of courses in the program
+  objectives?: string[];
+  prerequisites?: string[];
+  order: number;
+}
+
+/** A course within a program with additional context */
+export interface ProgramCourse {
+  courseId: string;
+  year?: number;
+  semester?: 'fall' | 'spring' | 'summer';
+  credits: number;
+  prerequisites?: string[]; // Course IDs that must be completed first
+  order: number;
+  required: boolean; // true = required, false = elective
 }
 
 /** Module within a course */
@@ -185,6 +218,7 @@ export interface LearnerSettings {
 export interface ContentManifest {
   version: string;
   courses: Course[];
+  programs: Program[];
   learningPaths: LearningPath[];
   subjects: Subject[];
 }
