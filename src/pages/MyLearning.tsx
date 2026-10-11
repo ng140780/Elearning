@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BookOpen, TrendingUp, CheckCircle2, Clock, ArrowRight, BarChart3 } from 'lucide-react';
+import { BookOpen, TrendingUp, CheckCircle2, Clock, ArrowRight, BarChart3, Award } from 'lucide-react';
 import { getAllCourses } from '../services/content';
 import { getInProgressCourses, getCompletedCourses, getFullCourseProgress } from '../services/progress';
 import { useLearner } from '../context/LearnerContext';
@@ -92,6 +92,38 @@ export default function MyLearning() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Quick Links */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+        <Link
+          to="/quiz-history"
+          className="bg-white rounded-xl border border-surface-200 p-5 hover:border-primary-200 hover:bg-primary-50/30 transition-colors group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center group-hover:bg-primary-100 transition-colors">
+              <Award className="w-5 h-5 text-primary-600" />
+            </div>
+            <div>
+              <p className="font-semibold text-surface-900 group-hover:text-primary-700 transition-colors">Quiz History</p>
+              <p className="text-xs text-surface-500">View your quiz performance and analytics</p>
+            </div>
+          </div>
+        </Link>
+        <Link
+          to="/history"
+          className="bg-white rounded-xl border border-surface-200 p-5 hover:border-primary-200 hover:bg-primary-50/30 transition-colors group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-surface-100 rounded-lg flex items-center justify-center group-hover:bg-surface-200 transition-colors">
+              <Clock className="w-5 h-5 text-surface-600" />
+            </div>
+            <div>
+              <p className="font-semibold text-surface-900 group-hover:text-primary-700 transition-colors">Learning History</p>
+              <p className="text-xs text-surface-500">View all your recent activity</p>
+            </div>
+          </div>
+        </Link>
       </div>
 
       {/* Continue Learning */}
