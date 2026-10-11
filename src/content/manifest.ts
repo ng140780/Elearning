@@ -1,6 +1,7 @@
 import { ContentManifest } from '../types';
 import { uolBscCsCourses } from './uol-bsc-cs';
 import { bscComputerScienceCurriculum } from './bsc-computer-science-curriculum';
+import { bscWebMobileCurriculum } from './bsc-web-mobile-curriculum';
 
 /**
  * Content Manifest - Central registry for all learning content
@@ -136,6 +137,56 @@ export const contentManifest: ContentManifest = {
         { courseId: 'y3-07-final-project', year: 3, semester: 'spring', credits: 30, required: true, order: 23, prerequisites: ['y3-06-integrated-product'] },
       ],
       order: 3,
+    },
+    {
+      id: 'bsc-web-mobile-development',
+      type: 'program',
+      title: 'BSc Computer Science - Web & Mobile Development',
+      description: 'A complete 3-year BSc Computer Science program specializing in Web & Mobile Development. Covers programming foundations, full-stack development, mobile apps, AI integration, and cloud deployment. 360 credits with 22 taught modules + final project.',
+      level: 'bachelor',
+      totalCredits: 360,
+      estimatedDuration: '3 years',
+      objectives: [
+        'Master programming fundamentals and computer science theory',
+        'Build full-stack web applications with React and TypeScript',
+        'Develop cross-platform mobile applications with React Native',
+        'Integrate AI into web and mobile applications',
+        'Deploy production systems to the cloud',
+        'Apply software engineering best practices',
+        'Complete a substantial independent final project',
+      ],
+      prerequisites: [],
+      courses: [
+        // Year 1 - Computing Foundations (120 credits)
+        { courseId: 'wm-y1-cm1005', year: 1, semester: 'fall', credits: 15, required: true, order: 1 },
+        { courseId: 'wm-y1-cm1015', year: 1, semester: 'fall', credits: 15, required: true, order: 2 },
+        { courseId: 'wm-y1-cm1030', year: 1, semester: 'fall', credits: 15, required: true, order: 3 },
+        { courseId: 'wm-y1-cm1025', year: 1, semester: 'fall', credits: 15, required: true, order: 4 },
+        { courseId: 'wm-y1-cm1010', year: 1, semester: 'spring', credits: 15, required: true, order: 5, prerequisites: ['wm-y1-cm1005'] },
+        { courseId: 'wm-y1-cm1020', year: 1, semester: 'spring', credits: 15, required: true, order: 6, prerequisites: ['wm-y1-cm1015'] },
+        { courseId: 'wm-y1-cm1035', year: 1, semester: 'spring', credits: 15, required: true, order: 7, prerequisites: ['wm-y1-cm1010'] },
+        { courseId: 'wm-y1-cm1040', year: 1, semester: 'spring', credits: 15, required: true, order: 8 },
+        
+        // Year 2 - Software & Full-Stack Development (120 credits)
+        { courseId: 'wm-y2-cm2005', year: 2, semester: 'fall', credits: 15, required: true, order: 9, prerequisites: ['wm-y1-cm1010'] },
+        { courseId: 'wm-y2-cm2010', year: 2, semester: 'fall', credits: 15, required: true, order: 10, prerequisites: ['wm-y1-cm1010'] },
+        { courseId: 'wm-y2-cm2040', year: 2, semester: 'fall', credits: 15, required: true, order: 11, prerequisites: ['wm-y1-cm1035', 'wm-y1-cm1040'] },
+        { courseId: 'wm-y2-cm2015', year: 2, semester: 'fall', credits: 15, required: true, order: 12, prerequisites: ['wm-y1-cm1010'] },
+        { courseId: 'wm-y2-cm2035', year: 2, semester: 'spring', credits: 15, required: true, order: 13, prerequisites: ['wm-y1-cm1035'] },
+        { courseId: 'wm-y2-cm2025', year: 2, semester: 'spring', credits: 15, required: true, order: 14, prerequisites: ['wm-y1-cm1030', 'wm-y1-cm1040'] },
+        { courseId: 'wm-y2-cm2030', year: 2, semester: 'spring', credits: 15, required: true, order: 15, prerequisites: ['wm-y1-cm1010', 'wm-y1-cm1040'] },
+        { courseId: 'wm-y2-wm2001', year: 2, semester: 'spring', credits: 15, required: true, order: 16, prerequisites: ['wm-y1-cm1040', 'wm-y2-cm2040'] },
+        
+        // Year 3 - Advanced Web, Mobile & Applied AI (120 credits)
+        { courseId: 'wm-y3-cm3035', year: 3, semester: 'fall', credits: 10, required: true, order: 17, prerequisites: ['wm-y2-wm2001'] },
+        { courseId: 'wm-y3-cm3050', year: 3, semester: 'fall', credits: 10, required: true, order: 18, prerequisites: ['wm-y2-wm2001'] },
+        { courseId: 'wm-y3-cm3020', year: 3, semester: 'fall', credits: 10, required: true, order: 19, prerequisites: ['wm-y2-wm2001', 'wm-y2-cm2015'] },
+        { courseId: 'wm-y3-cm3010', year: 3, semester: 'spring', credits: 10, required: true, order: 20, prerequisites: ['wm-y2-wm2001'] },
+        { courseId: 'wm-y3-cm3055', year: 3, semester: 'spring', credits: 10, required: true, order: 21, prerequisites: ['wm-y1-cm1040'] },
+        { courseId: 'wm-y3-cm3060', year: 3, semester: 'spring', credits: 10, required: true, order: 22, prerequisites: ['wm-y2-cm2010'] },
+        { courseId: 'wm-y3-cm3070', year: 3, semester: 'spring', credits: 60, required: true, order: 23, prerequisites: ['wm-y3-cm3035', 'wm-y3-cm3050'] },
+      ],
+      order: 4,
     },
   ],
   subjects: [
@@ -529,6 +580,8 @@ export const contentManifest: ContentManifest = {
     ...uolBscCsCourses,
     // New Comprehensive BSc Computer Science Curriculum
     ...bscComputerScienceCurriculum,
+    // BSc Computer Science - Web & Mobile Development Specialism
+    ...bscWebMobileCurriculum,
   ],
   learningPaths: [
     {
