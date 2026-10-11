@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, BookOpen, Search, Home, Compass, BarChart3, Route, Bookmark, Clock, Settings } from 'lucide-react';
+import { Menu, X, BookOpen, Search, Home, Compass, BarChart3, Route, Bookmark, Clock, Settings, GraduationCap } from 'lucide-react';
 
 const navItems = [
   { path: '/', label: 'Home', icon: Home },
   { path: '/courses', label: 'Explore Courses', icon: Compass },
+  { path: '/programs', label: 'Programs', icon: GraduationCap },
   { path: '/my-learning', label: 'My Learning', icon: BarChart3 },
   { path: '/learning-paths', label: 'Learning Paths', icon: Route },
   { path: '/bookmarks', label: 'Bookmarks', icon: Bookmark },

@@ -1,7 +1,8 @@
 import { contentManifest } from '../content/manifest';
-import { Course, LearningPath, Subject, LearningUnitId, Lesson, Module } from '../types';
+import { Course, LearningPath, Subject, LearningUnitId, Lesson, Module, Program } from '../types';
 import { validateContent } from './validation';
 import { getCourses as getEditableCourses, getCourse as getEditableCourse } from './courseManagement';
+import { getPrograms as getEditablePrograms, getProgram as getEditableProgram } from './programManagement';
 
 // Validate content on load
 const validationResult = validateContent();
@@ -147,4 +148,62 @@ export function getUniqueDifficulties(): string[] {
     if (c.difficulty) difficulties.add(c.difficulty);
   });
   return Array.from(difficulties);
+}
+
+/** Get all programs */
+export function getAllPrograms(): Program[] {
+  return [...getEditablePrograms()].sort((a, b) => a.order - b.order);
+}
+
+/** Get a program by ID */
+export function getProgramById(id: string): Program | undefined {
+  return getEditableProgram(id);
+}
+
+/** Get courses in a program with full course details */
+export function getProgramCourses(programId: string): Array<{ course: Course; programCourse: Program['courses'][0] }> {
+  const program = getProgramById(programId);
+  if (!program) return [];
+  
+  return program.courses
+    .sort((a, b) => a.order - b.order)
+    .map(pc => {
+      const course = getCourseById(pc.courseId);
+      return course ? { course, programCourse: pc } : null;
+    })
+    .filter((item): item is { course: Course; programCourse: Program['courses'][0] } => item !== null);
+}
+
+/** Calculate program progress */
+export function getProgramProgress(programId: string): { completedCourses: number; totalCourses: number; completedCredits: number; totalCredits: number; percentage: number } {
+  const programCourses = getProgramCourses(programId);
+  const totalCourses = programCourses.length;
+  const totalCredits = programCourses.reduce((sum, pc) => sum + pc.programCourse.credits, 0);
+  
+  let completedCourses = 0;
+  let completedCredits = 0;
+  
+  programCourses.forEach(({ course, programCourse }) => {
+    const totalLessons = course.modules?.reduce((sum, m) => sum + (m.lessons?.length || 0), 0) || 0;
+    if (totalLessons === 0) return;
+    
+    const completedLessons = course.modules?.reduce((sum, m) => 
+      sum + (m.lessons?.filter(l => {
+        const progress = JSON.parse(localStorage.getItem('learnhub_learner_state') || '{}').lessonProgress?.[l.id];
+        return progress?.completed;
+      }).length || 0), 0) || 0;
+    
+    if (completedLessons === totalLessons) {
+      completedCourses++;
+      completedCredits += programCourse.credits;
+    }
+  });
+  
+  return {
+    completedCourses,
+    totalCourses,
+    completedCredits,
+    totalCredits,
+    percentage: totalCourses > 0 ? Math.round((completedCourses / totalCourses) * 100) : 0,
+  };
 }

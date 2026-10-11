@@ -11,6 +11,8 @@ export default function Settings() {
   const handleReset = () => {
     clearData();
     setShowConfirmReset(false);
+    // Reload page to ensure all components pick up the reset state
+    window.location.reload();
   };
 
   return (
@@ -140,7 +142,16 @@ export default function Settings() {
             ) : (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                 <p className="text-sm text-red-800 font-medium mb-3">
-                  Are you sure? This will permanently delete all your progress, bookmarks, and history.
+                  Are you sure? This will permanently delete:
+                </p>
+                <ul className="text-sm text-red-700 mb-3 list-disc list-inside space-y-1">
+                  <li>All learning progress</li>
+                  <li>All bookmarks</li>
+                  <li>Learning history</li>
+                  <li>Any custom courses/modules/lessons you added</li>
+                </ul>
+                <p className="text-xs text-red-600">
+                  This action cannot be undone.
                 </p>
                 <div className="flex gap-3">
                   <button

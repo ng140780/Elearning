@@ -13,6 +13,60 @@ import { ContentManifest } from '../types';
  */
 export const contentManifest: ContentManifest = {
   version: '1.0.0',
+  programs: [
+    {
+      id: 'bsc-computer-science',
+      type: 'program',
+      title: 'BSc Computer Science',
+      description: 'A comprehensive 3-year undergraduate program covering computer science fundamentals, algorithms, software engineering, and specialized topics.',
+      level: 'bachelor',
+      totalCredits: 180,
+      estimatedDuration: '3 years',
+      objectives: [
+        'Master fundamental computer science concepts',
+        'Develop strong programming skills across multiple paradigms',
+        'Understand algorithms, data structures, and computational complexity',
+        'Build software engineering and system design expertise',
+        'Apply knowledge to real-world problems through projects',
+      ],
+      prerequisites: [],
+      courses: [
+        // Year 1
+        { courseId: 'cs101', year: 1, semester: 'fall', credits: 15, required: true, order: 1 },
+        { courseId: 'math301', year: 1, semester: 'fall', credits: 15, required: true, order: 2 },
+        { courseId: 'web101', year: 1, semester: 'spring', credits: 15, required: true, order: 3, prerequisites: ['cs101'] },
+        // Year 2
+        { courseId: 'ds201', year: 2, semester: 'fall', credits: 15, required: true, order: 4, prerequisites: ['cs101', 'math301'] },
+        // Year 3 - electives
+        { courseId: 'ux101', year: 3, semester: 'fall', credits: 10, required: false, order: 5 },
+        { courseId: 'phil201', year: 3, semester: 'spring', credits: 10, required: false, order: 6 },
+      ],
+      order: 1,
+    },
+    {
+      id: 'frontend-developer',
+      type: 'program',
+      title: 'Frontend Developer Professional Certificate',
+      description: 'A structured 8-module program to become a professional frontend developer. Learn HTML, CSS, JavaScript, React, and modern web development practices.',
+      level: 'professional',
+      totalCredits: 80,
+      estimatedDuration: '6 months',
+      objectives: [
+        'Build responsive, accessible websites from scratch',
+        'Master modern JavaScript and TypeScript',
+        'Develop production-ready React applications',
+        'Implement testing and deployment workflows',
+        'Create a professional portfolio of projects',
+      ],
+      prerequisites: [],
+      courses: [
+        { courseId: 'web101', credits: 10, required: true, order: 1 },
+        { courseId: 'ux101', credits: 10, required: true, order: 2 },
+        // Additional courses would be added here
+      ],
+      order: 2,
+    },
+  ],
   subjects: [
     { id: 'computer-science', name: 'Computer Science', icon: '💻', description: 'Algorithms, data structures, and computational thinking' },
     { id: 'mathematics', name: 'Mathematics', icon: '📐', description: 'Pure and applied mathematics' },
