@@ -132,3 +132,66 @@ body {
   font-size: 0.875rem;
   font-family: 'JetBrains Mono', monospace;
 }
+
+/* Dark mode styles */
+.dark {
+  --color-surface-50: #0f172a;
+  --color-surface-100: #1e293b;
+  --color-surface-200: #334155;
+  --color-surface-300: #475569;
+  --color-surface-400: #64748b;
+  --color-surface-500: #94a3b8;
+  --color-surface-600: #cbd5e1;
+  --color-surface-700: #e2e8f0;
+  --color-surface-800: #f1f5f9;
+  --color-surface-900: #f8fafc;
+}
+
+.dark body {
+  background-color: var(--color-surface-50);
+  color: var(--color-surface-800);
+}
+
+.dark .bg-white {
+  background-color: var(--color-surface-100);
+}
+
+.dark .bg-surface-50 {
+  background-color: var(--color-surface-50);
+}
+
+.dark .border-surface-200 {
+  border-color: var(--color-surface-200);
+}
+
+.dark .text-surface-900 {
+  color: var(--color-surface-900);
+}
+
+.dark .text-surface-800 {
+  color: var(--color-surface-800);
+}
+
+.dark .text-surface-700 {
+  color: var(--color-surface-700);
+}
+
+.dark .text-surface-600 {
+  color: var(--color-surface-600);
+}
+
+.dark .text-surface-500 {
+  color: var(--color-surface-500);
+}
+
+.dark .text-surface-400 {
+  color: var(--color-surface-400);
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: var(--color-surface-100);
+  border-color: var(--color-surface-200);
+  color: var(--color-surface-800);
+}

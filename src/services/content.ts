@@ -1,5 +1,15 @@
 import { contentManifest } from '../content/manifest';
 import { Course, LearningPath, Subject, LearningUnitId, Lesson, Module } from '../types';
+import { validateContent } from './validation';
+
+// Validate content on load
+const validationResult = validateContent();
+if (!validationResult.valid) {
+  console.error('Content validation failed:', validationResult.errors);
+}
+if (validationResult.warnings.length > 0) {
+  console.warn('Content warnings:', validationResult.warnings);
+}
 
 /**
  * Content Service

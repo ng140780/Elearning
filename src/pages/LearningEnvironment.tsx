@@ -11,6 +11,7 @@ export default function LearningEnvironment() {
   const navigate = useNavigate();
   const { isLessonCompleted, markLessonComplete, markLessonIncomplete, recordAccess, addToHistory, isBookmarked, toggleBookmark } = useLearner();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [expandedModules, setExpandedModules] = useState<Record<string, boolean>>({});
 
   const context = courseId && lessonId ? getLessonWithContext(courseId, lessonId) : null;
   const course = courseId ? getCourseById(courseId) : null;
@@ -165,40 +166,52 @@ export default function LearningEnvironment() {
             </div>
 
             <nav className="space-y-1">
-              {course.modules?.map((mod) => (
-                <div key={mod.id} className="mb-3">
-                  <div className="flex items-center gap-2 px-2 py-1.5">
-                    <ChevronRight className="w-3.5 h-3.5 text-surface-400" />
-                    <span className="text-xs font-semibold text-surface-500 uppercase tracking-wider">
-                      {mod.title}
-                    </span>
+              {course.modules?.map((mod) => {
+                const isExpanded = expandedModules[mod.id] !== false; // Default to expanded
+                return (
+                  <div key={mod.id} className="mb-3">
+                    <button
+                      onClick={() => setExpandedModules(prev => ({ ...prev, [mod.id]: !isExpanded }))}
+                      className="flex items-center gap-2 px-2 py-1.5 w-full text-left hover:bg-surface-50 rounded-lg transition-colors"
+                    >
+                      {isExpanded ? (
+                        <ChevronDown className="w-3.5 h-3.5 text-surface-400" />
+                      ) : (
+                        <ChevronRight className="w-3.5 h-3.5 text-surface-400" />
+                      )}
+                      <span className="text-xs font-semibold text-surface-500 uppercase tracking-wider">
+                        {mod.title}
+                      </span>
+                    </button>
+                    {isExpanded && (
+                      <div className="ml-2 space-y-0.5 mt-1">
+                        {mod.lessons?.map((l) => {
+                          const isCompleted = isLessonCompleted(l.id);
+                          const isCurrent = l.id === lessonId;
+                          return (
+                            <button
+                              key={l.id}
+                              onClick={() => navigateToLesson(l.id)}
+                              className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left text-sm transition-colors ${
+                                isCurrent
+                                  ? 'bg-primary-50 text-primary-700 font-medium'
+                                  : 'text-surface-600 hover:bg-surface-50'
+                              }`}
+                            >
+                              {isCompleted ? (
+                                <CheckCircle2 className="w-4 h-4 text-accent-500 flex-shrink-0" />
+                              ) : (
+                                <Circle className="w-4 h-4 text-surface-300 flex-shrink-0" />
+                              )}
+                              <span className="truncate">{l.title}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
-                  <div className="ml-2 space-y-0.5">
-                    {mod.lessons?.map((l) => {
-                      const isCompleted = isLessonCompleted(l.id);
-                      const isCurrent = l.id === lessonId;
-                      return (
-                        <button
-                          key={l.id}
-                          onClick={() => navigateToLesson(l.id)}
-                          className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left text-sm transition-colors ${
-                            isCurrent
-                              ? 'bg-primary-50 text-primary-700 font-medium'
-                              : 'text-surface-600 hover:bg-surface-50'
-                          }`}
-                        >
-                          {isCompleted ? (
-                            <CheckCircle2 className="w-4 h-4 text-accent-500 flex-shrink-0" />
-                          ) : (
-                            <Circle className="w-4 h-4 text-surface-300 flex-shrink-0" />
-                          )}
-                          <span className="truncate">{l.title}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </nav>
           </div>
         </aside>

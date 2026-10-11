@@ -5,6 +5,8 @@ import { useState } from 'react';
 export default function Settings() {
   const { state, updateSettings, clearData } = useLearner();
   const [showConfirmReset, setShowConfirmReset] = useState(false);
+  const [lessonView, setLessonView] = useState('reading');
+  const [autoAdvance, setAutoAdvance] = useState(false);
 
   const handleReset = () => {
     clearData();
@@ -85,9 +87,13 @@ export default function Settings() {
                 <p className="text-sm font-medium text-surface-700">Default lesson view</p>
                 <p className="text-xs text-surface-400 mt-0.5">Choose how lessons are displayed by default</p>
               </div>
-              <select className="px-3 py-2 bg-white border border-surface-200 rounded-lg text-sm text-surface-700 focus:outline-none focus:ring-2 focus:ring-primary-500">
-                <option>Reading view</option>
-                <option>Focus mode</option>
+              <select
+                value={lessonView}
+                onChange={(e) => setLessonView(e.target.value)}
+                className="px-3 py-2 bg-white border border-surface-200 rounded-lg text-sm text-surface-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="reading">Reading view</option>
+                <option value="focus">Focus mode</option>
               </select>
             </div>
             <div className="flex items-center justify-between py-2">
@@ -96,7 +102,12 @@ export default function Settings() {
                 <p className="text-xs text-surface-400 mt-0.5">Automatically go to next lesson after completion</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" />
+                <input
+                  type="checkbox"
+                  checked={autoAdvance}
+                  onChange={(e) => setAutoAdvance(e.target.checked)}
+                  className="sr-only peer"
+                />
                 <div className="w-11 h-6 bg-surface-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-surface-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
               </label>
             </div>

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { LearnerProvider } from './context/LearnerContext';
+import ThemeProvider from './ThemeProvider';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import ExploreCourses from './pages/ExploreCourses';
@@ -16,26 +17,28 @@ import NotFound from './pages/NotFound';
 function App() {
   return (
     <LearnerProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Learning environment has its own layout (no header/footer) */}
-          <Route path="/learn/:courseId/:lessonId" element={<LearningEnvironment />} />
-          
-          {/* All other pages use the main layout */}
-          <Route element={<Layout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/courses" element={<ExploreCourses />} />
-            <Route path="/courses/:courseId" element={<CourseDetails />} />
-            <Route path="/my-learning" element={<MyLearning />} />
-            <Route path="/learning-paths" element={<LearningPaths />} />
-            <Route path="/learning-paths/:pathId" element={<LearningPathDetail />} />
-            <Route path="/bookmarks" element={<Bookmarks />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <ThemeProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Learning environment has its own layout (no header/footer) */}
+            <Route path="/learn/:courseId/:lessonId" element={<LearningEnvironment />} />
+            
+            {/* All other pages use the main layout */}
+            <Route element={<Layout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/courses" element={<ExploreCourses />} />
+              <Route path="/courses/:courseId" element={<CourseDetails />} />
+              <Route path="/my-learning" element={<MyLearning />} />
+              <Route path="/learning-paths" element={<LearningPaths />} />
+              <Route path="/learning-paths/:pathId" element={<LearningPathDetail />} />
+              <Route path="/bookmarks" element={<Bookmarks />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
     </LearnerProvider>
   );
 }
