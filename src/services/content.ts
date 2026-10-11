@@ -62,7 +62,7 @@ export function searchCourses(query: string): Course[] {
 
 /** Get all subjects */
 export function getAllSubjects(): Subject[] {
-  const subjects = contentManifest.subjects;
+  const subjects = getEditableSubjects();
   return subjects.map(s => ({
     ...s,
     courseCount: getEditableCourses().filter(
@@ -76,14 +76,17 @@ export function getSubjectById(id: string): Subject | undefined {
   return getAllSubjects().find(s => s.id === id);
 }
 
+import { getLearningPaths as getEditableLearningPaths, getLearningPath as getEditableLearningPath } from './learningPathManagement';
+import { getSubjects as getEditableSubjects } from './subjectManagement';
+
 /** Get all learning paths */
 export function getAllLearningPaths(): LearningPath[] {
-  return [...contentManifest.learningPaths].sort((a, b) => a.order - b.order);
+  return [...getEditableLearningPaths()].sort((a, b) => a.order - b.order);
 }
 
 /** Get a learning path by ID */
 export function getLearningPathById(id: LearningUnitId): LearningPath | undefined {
-  return contentManifest.learningPaths.find(lp => lp.id === id);
+  return getEditableLearningPath(id);
 }
 
 /** Get all lessons for a course (flat list) */

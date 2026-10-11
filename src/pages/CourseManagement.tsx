@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Edit2, Trash2, ArrowLeft, Save, X, BookOpen, AlertTriangle } from 'lucide-react';
-import { getCourses, addModule, updateModule, deleteModule, addLesson, updateLesson, deleteLesson, addCourse, updateCourse, deleteCourse } from '../services/courseManagement';
-import type { Course, Module, Lesson } from '../types';
+import { Plus, Edit2, Trash2, ArrowLeft, Save, X, BookOpen, AlertTriangle, Folder, FileText, HelpCircle, Code, Link2 } from 'lucide-react';
+import { getCourses, addModule, updateModule, deleteModule, addLesson, updateLesson, deleteLesson, addCourse, updateCourse, deleteCourse, addTopic, updateTopic, deleteTopic, addResource, updateResource, deleteResource, addQuizQuestion, updateQuizQuestion, deleteQuizQuestion, setExercise, deleteExercise } from '../services/courseManagement';
+import type { Course, Module, Lesson, Topic, Resource, QuizQuestion, ExerciseDefinition } from '../types';
 
 export default function CourseManagement() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -28,6 +28,36 @@ export default function CourseManagement() {
   const [lessonTitle, setLessonTitle] = useState('');
   const [lessonContent, setLessonContent] = useState('');
   const [lessonType, setLessonType] = useState<'text' | 'video' | 'exercise' | 'quiz' | 'project'>('text');
+  
+  // Topic states
+  const [showAddTopic, setShowAddTopic] = useState<string | null>(null);
+  const [editingTopic, setEditingTopic] = useState<{ moduleId: string; topic: Topic } | null>(null);
+  const [topicTitle, setTopicTitle] = useState('');
+  const [topicDescription, setTopicDescription] = useState('');
+  
+  // Resource states
+  const [showAddResource, setShowAddResource] = useState<string | null>(null);
+  const [editingResource, setEditingResource] = useState<{ moduleId: string; lessonId: string; resource: Resource } | null>(null);
+  const [resourceTitle, setResourceTitle] = useState('');
+  const [resourceUrl, setResourceUrl] = useState('');
+  const [resourceType, setResourceType] = useState<'pdf' | 'link' | 'code' | 'video' | 'document'>('link');
+  
+  // Quiz states
+  const [showAddQuiz, setShowAddQuiz] = useState<string | null>(null);
+  const [editingQuiz, setEditingQuiz] = useState<{ moduleId: string; lessonId: string; question: QuizQuestion } | null>(null);
+  const [quizQuestion, setQuizQuestion] = useState('');
+  const [quizType, setQuizType] = useState<'multiple-choice' | 'true-false' | 'short-answer'>('multiple-choice');
+  const [quizOptions, setQuizOptions] = useState<string[]>(['', '', '', '']);
+  const [quizCorrectAnswer, setQuizCorrectAnswer] = useState<string | number>(0);
+  const [quizExplanation, setQuizExplanation] = useState('');
+  
+  // Exercise states
+  const [showAddExercise, setShowAddExercise] = useState<string | null>(null);
+  const [exerciseTitle, setExerciseTitle] = useState('');
+  const [exerciseDescription, setExerciseDescription] = useState('');
+  const [exerciseStarterCode, setExerciseStarterCode] = useState('');
+  const [exerciseExpectedOutput, setExerciseExpectedOutput] = useState('');
+  const [exerciseLanguage, setExerciseLanguage] = useState('python');
 
   useEffect(() => {
     setCourses(getCourses());
@@ -106,6 +136,14 @@ export default function CourseManagement() {
       );
       if (module) {
         deleteLesson(selectedCourse.id, module.id, showDeleteConfirm.id);
+      }
+    } else if (showDeleteConfirm.type === 'topic' && selectedCourse) {
+      // Find the module that contains this topic
+      const module = selectedCourse.modules?.find(m => 
+        m.topics?.some(t => t.id === showDeleteConfirm.id)
+      );
+      if (module) {
+        deleteTopic(selectedCourse.id, module.id, showDeleteConfirm.id);
       }
     }
     
@@ -190,6 +228,139 @@ export default function CourseManagement() {
   const handleDeleteLesson = (moduleId: string, lesson: Lesson) => {
     setEditingLesson({ moduleId, lesson });
     setShowDeleteConfirm({ type: 'lesson', id: lesson.id, name: lesson.title });
+  };
+
+  // Topic operations
+  const handleAddTopic = (moduleId: string) => {
+    if (!selectedCourse || !topicTitle.trim()) return;
+    addTopic(selectedCourse.id, moduleId, {
+      type: 'topic',
+      title: topicTitle,
+      description: topicDescription,
+      order: 1,
+    });
+    setTopicTitle('');
+    setTopicDescription('');
+    setShowAddTopic(null);
+    refreshCourses();
+  };
+
+  const handleUpdateTopic = () => {
+    if (!selectedCourse || !editingTopic || !topicTitle.trim()) return;
+    updateTopic(selectedCourse.id, editingTopic.moduleId, editingTopic.topic.id, {
+      title: topicTitle,
+      description: topicDescription,
+    });
+    setEditingTopic(null);
+    setTopicTitle('');
+    setTopicDescription('');
+    refreshCourses();
+  };
+
+  const handleDeleteTopic = (moduleId: string, topic: Topic) => {
+    setShowDeleteConfirm({ type: 'topic', id: topic.id, name: topic.title });
+  };
+
+  // Resource operations
+  const handleAddResource = (moduleId: string, lessonId: string) => {
+    if (!selectedCourse || !resourceTitle.trim() || !resourceUrl.trim()) return;
+    addResource(selectedCourse.id, moduleId, lessonId, {
+      title: resourceTitle,
+      url: resourceUrl,
+      type: resourceType,
+    });
+    setResourceTitle('');
+    setResourceUrl('');
+    setResourceType('link');
+    setShowAddResource(null);
+    refreshCourses();
+  };
+
+  const handleUpdateResource = () => {
+    if (!selectedCourse || !editingResource) return;
+    updateResource(selectedCourse.id, editingResource.moduleId, editingResource.lessonId, editingResource.resource.id, {
+      title: resourceTitle,
+      url: resourceUrl,
+      type: resourceType,
+    });
+    setEditingResource(null);
+    setResourceTitle('');
+    setResourceUrl('');
+    setResourceType('link');
+    refreshCourses();
+  };
+
+  const handleDeleteResource = (moduleId: string, lessonId: string, resource: Resource) => {
+    if (!selectedCourse) return;
+    deleteResource(selectedCourse.id, moduleId, lessonId, resource.id);
+    refreshCourses();
+  };
+
+  // Quiz operations
+  const handleAddQuiz = (moduleId: string, lessonId: string) => {
+    if (!selectedCourse || !quizQuestion.trim()) return;
+    addQuizQuestion(selectedCourse.id, moduleId, lessonId, {
+      question: quizQuestion,
+      type: quizType,
+      options: quizType === 'multiple-choice' ? quizOptions : undefined,
+      correctAnswer: quizCorrectAnswer,
+      explanation: quizExplanation,
+    });
+    setQuizQuestion('');
+    setQuizOptions(['', '', '', '']);
+    setQuizCorrectAnswer(0);
+    setQuizExplanation('');
+    setShowAddQuiz(null);
+    refreshCourses();
+  };
+
+  const handleUpdateQuiz = () => {
+    if (!selectedCourse || !editingQuiz) return;
+    updateQuizQuestion(selectedCourse.id, editingQuiz.moduleId, editingQuiz.lessonId, editingQuiz.question.id, {
+      question: quizQuestion,
+      type: quizType,
+      options: quizType === 'multiple-choice' ? quizOptions : undefined,
+      correctAnswer: quizCorrectAnswer,
+      explanation: quizExplanation,
+    });
+    setEditingQuiz(null);
+    setQuizQuestion('');
+    setQuizOptions(['', '', '', '']);
+    setQuizCorrectAnswer(0);
+    setQuizExplanation('');
+    refreshCourses();
+  };
+
+  const handleDeleteQuiz = (moduleId: string, lessonId: string, question: QuizQuestion) => {
+    if (!selectedCourse) return;
+    deleteQuizQuestion(selectedCourse.id, moduleId, lessonId, question.id);
+    refreshCourses();
+  };
+
+  // Exercise operations
+  const handleAddExercise = (moduleId: string, lessonId: string) => {
+    if (!selectedCourse || !exerciseTitle.trim()) return;
+    setExercise(selectedCourse.id, moduleId, lessonId, {
+      id: `exercise-${Date.now()}`,
+      title: exerciseTitle,
+      description: exerciseDescription,
+      starterCode: exerciseStarterCode,
+      expectedOutput: exerciseExpectedOutput,
+      language: exerciseLanguage,
+    });
+    setExerciseTitle('');
+    setExerciseDescription('');
+    setExerciseStarterCode('');
+    setExerciseExpectedOutput('');
+    setExerciseLanguage('python');
+    setShowAddExercise(null);
+    refreshCourses();
+  };
+
+  const handleDeleteExercise = (moduleId: string, lessonId: string) => {
+    if (!selectedCourse) return;
+    deleteExercise(selectedCourse.id, moduleId, lessonId);
+    refreshCourses();
   };
 
   return (
