@@ -11,6 +11,7 @@ import LearningPathDetail from './pages/LearningPathDetail';
 import Bookmarks from './pages/Bookmarks';
 import History from './pages/History';
 import Settings from './pages/Settings';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/bookmarks" element={<Bookmarks />} />
             <Route path="/history" element={<History />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       </BrowserRouter>
