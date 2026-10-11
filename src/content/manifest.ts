@@ -1,4 +1,5 @@
 import { ContentManifest } from '../types';
+import { uolBscCsCourses } from './uol-bsc-cs';
 
 /**
  * Content Manifest - Central registry for all learning content
@@ -15,31 +16,50 @@ export const contentManifest: ContentManifest = {
   version: '1.0.0',
   programs: [
     {
-      id: 'bsc-computer-science',
+      id: 'bsc-uol-computer-science',
       type: 'program',
-      title: 'BSc Computer Science',
-      description: 'A comprehensive 3-year undergraduate program covering computer science fundamentals, algorithms, software engineering, and specialized topics.',
+      title: 'BSc Computer Science (University of London)',
+      description: 'A comprehensive 3-6 year undergraduate program based on the University of London\'s online BSc Computer Science curriculum. This program covers programming, algorithms, data structures, software engineering, databases, AI, and more. Based on the REPL curriculum.',
       level: 'bachelor',
-      totalCredits: 180,
-      estimatedDuration: '3 years',
+      totalCredits: 360,
+      estimatedDuration: '3-6 years',
       objectives: [
-        'Master fundamental computer science concepts',
-        'Develop strong programming skills across multiple paradigms',
+        'Master programming in multiple languages and paradigms',
         'Understand algorithms, data structures, and computational complexity',
-        'Build software engineering and system design expertise',
-        'Apply knowledge to real-world problems through projects',
+        'Develop software engineering and system design expertise',
+        'Apply mathematical foundations to computer science problems',
+        'Build real-world applications through projects and assignments',
+        'Specialize in areas like AI, data science, web development, or security',
       ],
       prerequisites: [],
       courses: [
-        // Year 1
-        { courseId: 'cs101', year: 1, semester: 'fall', credits: 15, required: true, order: 1 },
-        { courseId: 'math301', year: 1, semester: 'fall', credits: 15, required: true, order: 2 },
-        { courseId: 'web101', year: 1, semester: 'spring', credits: 15, required: true, order: 3, prerequisites: ['cs101'] },
-        // Year 2
-        { courseId: 'ds201', year: 2, semester: 'fall', credits: 15, required: true, order: 4, prerequisites: ['cs101', 'math301'] },
-        // Year 3 - electives
-        { courseId: 'ux101', year: 3, semester: 'fall', credits: 10, required: false, order: 5 },
-        { courseId: 'phil201', year: 3, semester: 'spring', credits: 10, required: false, order: 6 },
+        // Level 4 (Year 1) - 8 modules × 30 credits = 240 credits total for Level 4
+        { courseId: 'uol-cm1005', year: 1, semester: 'fall', credits: 30, required: true, order: 1 },
+        { courseId: 'uol-cm1010', year: 1, semester: 'fall', credits: 30, required: true, order: 2, prerequisites: ['uol-cm1005'] },
+        { courseId: 'uol-cm1015', year: 1, semester: 'fall', credits: 30, required: true, order: 3 },
+        { courseId: 'uol-cm1020', year: 1, semester: 'spring', credits: 30, required: true, order: 4, prerequisites: ['uol-cm1015'] },
+        { courseId: 'uol-cm1025', year: 1, semester: 'spring', credits: 30, required: true, order: 5 },
+        { courseId: 'uol-cm1030', year: 1, semester: 'spring', credits: 30, required: true, order: 6 },
+        { courseId: 'uol-cm1035', year: 1, semester: 'spring', credits: 30, required: true, order: 7, prerequisites: ['uol-cm1005'] },
+        { courseId: 'uol-cm1040', year: 1, semester: 'spring', credits: 30, required: true, order: 8, prerequisites: ['uol-cm1005'] },
+        
+        // Level 5 (Year 2) - 8 modules × 30 credits = 240 credits total for Level 5
+        { courseId: 'uol-cm2005', year: 2, semester: 'fall', credits: 30, required: true, order: 9, prerequisites: ['uol-cm1010'] },
+        { courseId: 'uol-cm2010', year: 2, semester: 'fall', credits: 30, required: true, order: 10, prerequisites: ['uol-cm1010'] },
+        { courseId: 'uol-cm2015', year: 2, semester: 'fall', credits: 30, required: true, order: 11, prerequisites: ['uol-cm1010'] },
+        { courseId: 'uol-cm2025', year: 2, semester: 'spring', credits: 30, required: true, order: 12, prerequisites: ['uol-cm1010'] },
+        { courseId: 'uol-cm2030', year: 2, semester: 'spring', credits: 30, required: false, order: 13, prerequisites: ['uol-cm1010'] },
+        { courseId: 'uol-cm2035', year: 2, semester: 'spring', credits: 30, required: true, order: 14, prerequisites: ['uol-cm1035'] },
+        { courseId: 'uol-cm2040', year: 2, semester: 'spring', credits: 30, required: true, order: 15, prerequisites: ['uol-cm1035', 'uol-cm1040'] },
+        
+        // Level 6 (Year 3) - Choose 6 modules + Final Project
+        // Data Science Specialism (example)
+        { courseId: 'uol-cm3005', year: 3, semester: 'fall', credits: 30, required: false, order: 16, prerequisites: ['uol-cm2015'] },
+        { courseId: 'uol-cm3010', year: 3, semester: 'fall', credits: 30, required: false, order: 17, prerequisites: ['uol-cm2040'] },
+        { courseId: 'uol-cm3015', year: 3, semester: 'fall', credits: 30, required: false, order: 18, prerequisites: ['uol-cm2015'] },
+        { courseId: 'uol-cm3020', year: 3, semester: 'spring', credits: 30, required: false, order: 19, prerequisites: ['uol-cm2035'] },
+        { courseId: 'uol-cm3035', year: 3, semester: 'spring', credits: 30, required: false, order: 20, prerequisites: ['uol-cm1040'] },
+        { courseId: 'uol-cm3070', year: 3, semester: 'spring', credits: 30, required: true, order: 21, prerequisites: [] }, // Final Project
       ],
       order: 1,
     },
@@ -454,6 +474,8 @@ export const contentManifest: ContentManifest = {
         },
       ],
     },
+    // University of London BSc Computer Science Courses
+    ...uolBscCsCourses,
   ],
   learningPaths: [
     {
