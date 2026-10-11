@@ -21,15 +21,33 @@ function loadManifest() {
   const stored = localStorage.getItem('learnhub_manifest');
   if (stored) {
     try {
-      editableManifest = JSON.parse(stored);
-      // Ensure programs array exists
-      if (!editableManifest.programs) {
-        editableManifest.programs = [];
-      }
+      const parsed = JSON.parse(stored);
+      // Merge with default manifest to ensure new programs are included
+      editableManifest = {
+        ...contentManifest,
+        ...parsed,
+        // Ensure we have all default programs plus any user-added ones
+        programs: mergePrograms(contentManifest.programs || [], parsed.programs || []),
+      };
     } catch {
       editableManifest = JSON.parse(JSON.stringify(contentManifest));
     }
   }
+}
+
+/** Merge default programs with user-added programs */
+function mergePrograms(defaultPrograms: Program[], userPrograms: Program[]): Program[] {
+  const merged = [...defaultPrograms];
+  const defaultIds = new Set(defaultPrograms.map(p => p.id));
+  
+  // Add user programs that don't exist in defaults
+  userPrograms.forEach(userProgram => {
+    if (!defaultIds.has(userProgram.id)) {
+      merged.push(userProgram);
+    }
+  });
+  
+  return merged;
 }
 
 // Load on initialization
@@ -108,6 +126,23 @@ export function removeCourseFromProgram(programId: string, courseId: string): bo
   program.courses.splice(index, 1);
   saveManifest();
   return true;
+}
+
+/** Update a course in a program */
+export function updateCourseInProgram(
+  programId: string, 
+  courseId: string, 
+  updates: Partial<ProgramCourse>
+): ProgramCourse | null {
+  const program = getProgram(programId);
+  if (!program || !program.courses) return null;
+  
+  const index = program.courses.findIndex(pc => pc.courseId === courseId);
+  if (index === -1) return null;
+  
+  program.courses[index] = { ...program.courses[index], ...updates };
+  saveManifest();
+  return program.courses[index];
 }
 
 /** Reset to default manifest */

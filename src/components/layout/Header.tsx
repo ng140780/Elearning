@@ -11,6 +11,9 @@ const navItems = [
   { path: '/bookmarks', label: 'Bookmarks', icon: Bookmark },
   { path: '/history', label: 'History', icon: Clock },
   { path: '/manage', label: 'Manage Courses', icon: Settings },
+  { path: '/manage-programs', label: 'Manage Programs', icon: Settings },
+  { path: '/manage-learning-paths', label: 'Manage Paths', icon: Settings },
+  { path: '/manage-subjects', label: 'Manage Subjects', icon: Settings },
 ];
 
 export default function Header() {

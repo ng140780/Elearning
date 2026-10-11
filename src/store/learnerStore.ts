@@ -122,6 +122,45 @@ export const learnerStore = {
     return currentState.lessonProgress[lessonId]?.completed || false;
   },
 
+  removeCourseProgress(courseId: LearningUnitId) {
+    setState(prev => {
+      // Remove all lesson progress for this course
+      const newLessonProgress = { ...prev.lessonProgress };
+      Object.keys(newLessonProgress).forEach(lessonId => {
+        if (newLessonProgress[lessonId].courseId === courseId) {
+          delete newLessonProgress[lessonId];
+        }
+      });
+
+      // Remove course from progress
+      const newProgress = { ...prev.progress };
+      delete newProgress[courseId];
+
+      // Remove from history
+      const newHistory = prev.history.filter(h => h.courseId !== courseId);
+
+      // Remove bookmark if exists
+      const newBookmarks = prev.bookmarks.filter(b => b.targetId !== courseId);
+
+      // Persist changes
+      persistence.saveLearnerState({
+        ...prev,
+        lessonProgress: newLessonProgress,
+        progress: newProgress,
+        history: newHistory,
+        bookmarks: newBookmarks,
+      });
+
+      return {
+        ...prev,
+        lessonProgress: newLessonProgress,
+        progress: newProgress,
+        history: newHistory,
+        bookmarks: newBookmarks,
+      };
+    });
+  },
+
   clearData() {
     persistence.clearAllData();
     resetManifest();

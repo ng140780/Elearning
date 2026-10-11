@@ -106,6 +106,28 @@ export interface Topic extends LearningUnit {
   lessons?: Lesson[];
 }
 
+/** A quiz question */
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  type: 'multiple-choice' | 'true-false' | 'short-answer';
+  options?: string[]; // For multiple-choice
+  correctAnswer: string | number; // Index for MC, boolean string for TF, text for SA
+  explanation?: string;
+  points?: number;
+}
+
+/** An exercise definition */
+export interface ExerciseDefinition {
+  id: string;
+  title: string;
+  description: string;
+  starterCode?: string;
+  expectedOutput?: string;
+  language?: string;
+  hints?: string[];
+}
+
 /** A lesson - the atomic learning unit */
 export interface Lesson extends LearningUnit {
   type: 'lesson';
@@ -114,6 +136,8 @@ export interface Lesson extends LearningUnit {
   videoUrl?: string;
   externalUrl?: string;
   resources?: Resource[];
+  quizQuestions?: QuizQuestion[]; // For quiz content type
+  exercise?: ExerciseDefinition; // For exercise content type
 }
 
 /** A learning resource */
