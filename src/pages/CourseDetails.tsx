@@ -1,16 +1,17 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, BookOpen, CheckCircle2, Play, Bookmark, BookmarkCheck, ChevronRight, Target, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Clock, BookOpen, CheckCircle2, Play, Bookmark, BookmarkCheck, ChevronRight, Target, AlertCircle, Trash2 } from 'lucide-react';
 import { getCourseById, getAllLessonsForCourse } from '../services/content';
 import { getFullCourseProgress } from '../services/progress';
 import { useLearner } from '../context/LearnerContext';
 import ProgressBar from '../components/ui/ProgressBar';
 import EmptyState from '../components/ui/EmptyState';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function CourseDetails() {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  const { isBookmarked, toggleBookmark, isLessonCompleted } = useLearner();
+  const { isBookmarked, toggleBookmark, isLessonCompleted, removeCourseProgress } = useLearner();
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
 
   const course = courseId ? getCourseById(courseId) : undefined;
   const progress = course ? getFullCourseProgress(course) : null;
@@ -53,6 +54,14 @@ export default function CourseDetails() {
       navigate(`/learn/${course.id}/${progress.lastLessonId}`);
     } else if (firstLesson) {
       navigate(`/learn/${course.id}/${firstLesson.id}`);
+    }
+  };
+
+  const handleRemoveCourse = () => {
+    if (courseId) {
+      removeCourseProgress(courseId);
+      setShowRemoveConfirm(false);
+      navigate('/courses');
     }
   };
 
@@ -144,11 +153,55 @@ export default function CourseDetails() {
                   {bookmarked ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
                   {bookmarked ? 'Bookmarked' : 'Bookmark'}
                 </button>
+
+                {hasStarted && (
+                  <button
+                    onClick={() => setShowRemoveConfirm(true)}
+                    className="w-full flex items-center justify-center gap-2 px-5 py-3 mt-3 rounded-lg font-medium transition-colors border border-red-200 text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                    Remove from My Learning
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Remove Course Confirmation Modal */}
+      {showRemoveConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <Trash2 className="w-5 h-5 text-red-600" />
+              </div>
+              <h3 className="text-lg font-bold text-surface-900">Remove Course</h3>
+            </div>
+            <p className="text-surface-600 mb-2">
+              Are you sure you want to remove <strong>{course.title}</strong> from your learning?
+            </p>
+            <p className="text-red-600 text-sm font-medium mb-4">
+              ⚠️ This will delete all your progress, bookmarks, and history for this course. This action cannot be undone.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={handleRemoveCourse}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700"
+              >
+                Yes, Remove
+              </button>
+              <button
+                onClick={() => setShowRemoveConfirm(false)}
+                className="flex-1 px-4 py-2 bg-surface-200 text-surface-700 rounded-lg font-medium hover:bg-surface-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Course Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

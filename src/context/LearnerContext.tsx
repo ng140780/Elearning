@@ -16,6 +16,7 @@ export interface LearnerAPI {
   recordAccess: (lessonId: LearningUnitId, courseId: LearningUnitId) => void;
   isBookmarked: (targetId: LearningUnitId, type: 'course' | 'lesson' | 'learning-path') => boolean;
   isLessonCompleted: (lessonId: LearningUnitId) => boolean;
+  removeCourseProgress: (courseId: LearningUnitId) => void;
   clearData: () => void;
 }
 
@@ -45,6 +46,7 @@ export function useLearner(): LearnerAPI {
     recordAccess: (lessonId, courseId) => learnerStore.recordAccess(lessonId, courseId),
     isBookmarked: (targetId, type) => learnerStore.isBookmarked(targetId, type),
     isLessonCompleted: (lessonId) => learnerStore.isLessonCompleted(lessonId),
+    removeCourseProgress: (courseId) => learnerStore.removeCourseProgress(courseId),
     clearData: () => learnerStore.clearData(),
   };
 }
