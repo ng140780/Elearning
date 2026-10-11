@@ -19,7 +19,7 @@ function App() {
   return (
     <LearnerProvider>
       <ThemeProvider>
-        <BrowserRouter>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <Routes>
             {/* Learning environment has its own layout (no header/footer) */}
             <Route path="/learn/:courseId/:lessonId" element={<LearningEnvironment />} />
