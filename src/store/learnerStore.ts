@@ -14,6 +14,7 @@ const DEFAULT_STATE: LearnerState = {
   bookmarks: [],
   history: [],
   settings: { theme: 'light', fontSize: 'medium', sidebarCollapsed: false },
+  enrolledCourses: [],
 };
 
 type Listener = (state: LearnerState) => void;
@@ -142,6 +143,9 @@ export const learnerStore = {
       // Remove bookmark if exists
       const newBookmarks = prev.bookmarks.filter(b => b.targetId !== courseId);
 
+      // Remove from enrolled courses
+      const newEnrolledCourses = prev.enrolledCourses.filter(id => id !== courseId);
+
       // Persist changes
       persistence.saveLearnerState({
         ...prev,
@@ -149,6 +153,7 @@ export const learnerStore = {
         progress: newProgress,
         history: newHistory,
         bookmarks: newBookmarks,
+        enrolledCourses: newEnrolledCourses,
       });
 
       return {
@@ -157,8 +162,75 @@ export const learnerStore = {
         progress: newProgress,
         history: newHistory,
         bookmarks: newBookmarks,
+        enrolledCourses: newEnrolledCourses,
       };
     });
+  },
+
+  enrollCourse(courseId: string) {
+    setState(prev => {
+      if (prev.enrolledCourses.includes(courseId)) {
+        return prev; // Already enrolled
+      }
+
+      const newEnrolledCourses = [...prev.enrolledCourses, courseId];
+
+      persistence.saveLearnerState({
+        ...prev,
+        enrolledCourses: newEnrolledCourses,
+      });
+
+      return {
+        ...prev,
+        enrolledCourses: newEnrolledCourses,
+      };
+    });
+  },
+
+  unenrollCourse(courseId: string) {
+    setState(prev => {
+      if (!prev.enrolledCourses.includes(courseId)) {
+        return prev; // Not enrolled
+      }
+
+      const newEnrolledCourses = prev.enrolledCourses.filter(id => id !== courseId);
+
+      // Also remove all progress for this course
+      const newLessonProgress = { ...prev.lessonProgress };
+      Object.keys(newLessonProgress).forEach(lessonId => {
+        if (newLessonProgress[lessonId].courseId === courseId) {
+          delete newLessonProgress[lessonId];
+        }
+      });
+
+      const newProgress = { ...prev.progress };
+      delete newProgress[courseId];
+
+      const newHistory = prev.history.filter(h => h.courseId !== courseId);
+      const newBookmarks = prev.bookmarks.filter(b => b.targetId !== courseId);
+
+      persistence.saveLearnerState({
+        ...prev,
+        enrolledCourses: newEnrolledCourses,
+        lessonProgress: newLessonProgress,
+        progress: newProgress,
+        history: newHistory,
+        bookmarks: newBookmarks,
+      });
+
+      return {
+        ...prev,
+        enrolledCourses: newEnrolledCourses,
+        lessonProgress: newLessonProgress,
+        progress: newProgress,
+        history: newHistory,
+        bookmarks: newBookmarks,
+      };
+    });
+  },
+
+  isEnrolled(courseId: string): boolean {
+    return currentState.enrolledCourses.includes(courseId);
   },
 
   clearData() {

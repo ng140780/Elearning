@@ -226,6 +226,7 @@ export interface LearnerState {
   bookmarks: Bookmark[];
   history: HistoryEntry[];
   settings: LearnerSettings;
+  enrolledCourses: string[]; // List of course IDs the learner is enrolled in
 }
 
 /** Learner preferences */
