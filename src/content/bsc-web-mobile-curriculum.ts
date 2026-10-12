@@ -7,6 +7,8 @@ import { Course } from '../types';
  * Based on University of London BSc Computer Science
  * Primary Language: JavaScript with p5.js
  * Project: Space Explorer Game (progressive development)
+ * 
+ * Each week has its own module with 4-8 detailed lessons
  */
 
 export const bscWebMobileCurriculum: Course[] = [
@@ -38,6 +40,7 @@ export const bscWebMobileCurriculum: Course[] = [
     ],
     prerequisites: [],
     modules: [
+      // WEEK 1: Development Environment
       {
         id: 'wm-y1-cm1005-m1',
         type: 'module',
@@ -296,14 +299,7 @@ function draw() {
   fill(0, 128, 0);  // Dark green
   ellipse(110, 180, 80, 80);
 }
-\`\`\`
-
-## Exercise
-
-Try creating your own scene with:
-- A house (rectangle + triangle roof)
-- A car (rectangles + circles for wheels)
-- A person (circles + lines)`,
+\`\`\``,
             order: 4,
           },
           {
@@ -369,39 +365,7 @@ strokeWeight(5);  // 5 pixel thick outline
 \`\`\`javascript
 noFill();    // No fill (transparent inside)
 noStroke();  // No outline
-\`\`\`
-
-## Example: Colorful Shapes
-
-\`\`\`javascript
-function setup() {
-  createCanvas(400, 400);
-}
-
-function draw() {
-  background(255);
-  
-  // Red square
-  fill(255, 0, 0);
-  rect(50, 50, 100, 100);
-  
-  // Green circle with blue outline
-  fill(0, 255, 0);
-  stroke(0, 0, 255);
-  strokeWeight(5);
-  ellipse(250, 100, 100, 100);
-  
-  // Purple triangle, no fill
-  noFill();
-  stroke(128, 0, 128);
-  strokeWeight(3);
-  triangle(100, 250, 200, 350, 0, 350);
-}
-\`\`\`
-
-## Exercise
-
-Create a rainbow with 7 colored rectangles side by side!`,
+\`\`\``,
             order: 5,
           },
           {
@@ -476,43 +440,17 @@ If unsure what's causing an error:
 
 \`\`\`javascript
 // ellipse(200, 200, 50, 50);  // This line is ignored
-\`\`\`
-
-## Common Errors Checklist
-
-- Missing semicolons
-- Misspelled function names
-- Wrong number of parameters
-- Using undefined variables
-- Missing closing brackets }
-
-## Exercise
-
-Fix these buggy programs:
-
-**Bug 1:**
-\`\`\`javascript
-function setup() {
-  createCanvas(400, 400)
-}
-\`\`\`
-
-**Bug 2:**
-\`\`\`javascript
-function draw() {
-  background(220);
-  ellips(200, 200, 50, 50);
-}
 \`\`\``,
             order: 6,
           },
         ],
       },
+      // WEEK 2: Drawing in 2D
       {
         id: 'wm-y1-cm1005-m2',
         type: 'module',
-        title: 'Week 2: Advanced Drawing',
-        description: 'Learn advanced drawing techniques including transformations, arcs, curves, and animation',
+        title: 'Week 2: Drawing in 2D',
+        description: 'Advanced drawing techniques including transformations, arcs, curves, and animation',
         order: 2,
         lessons: [
           {
@@ -548,6 +486,112 @@ Think of drawing like painting on a canvas - first stroke is bottom layer, last 
           {
             id: 'wm-y1-cm1005-m2-l2',
             type: 'lesson',
+            title: 'Mathematical Positioning',
+            contentType: 'text',
+            content: `# Mathematical Positioning
+
+## Using Math for Precise Placement
+
+Instead of hardcoding positions, use mathematical calculations:
+
+\`\`\`javascript
+function draw() {
+  background(255);
+  
+  // Center of canvas
+  let centerX = width / 2;
+  let centerY = height / 2;
+  
+  // Draw circle at exact center
+  ellipse(centerX, centerY, 100, 100);
+  
+  // Draw circles in a row with equal spacing
+  let spacing = width / 5;
+  for (let i = 0; i < 5; i++) {
+    ellipse(spacing * i + spacing/2, 100, 30, 30);
+  }
+}
+\`\`\`
+
+## Grid Positioning
+
+Create a grid of objects:
+
+\`\`\`javascript
+function draw() {
+  background(255);
+  
+  let cols = 5;
+  let rows = 4;
+  let cellWidth = width / cols;
+  let cellHeight = height / rows;
+  
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      let x = col * cellWidth + cellWidth / 2;
+      let y = row * cellHeight + cellHeight / 2;
+      ellipse(x, y, 30, 30);
+    }
+  }
+}
+\`\`\``,
+            order: 2,
+          },
+          {
+            id: 'wm-y1-cm1005-m2-l3',
+            type: 'lesson',
+            title: 'Arcs and Curves',
+            contentType: 'text',
+            content: `# Arcs and Curves
+
+## Drawing Arcs
+
+An arc is a portion of an ellipse:
+
+\`\`\`javascript
+arc(x, y, width, height, startAngle, stopAngle);
+\`\`\`
+
+Angles are in radians. Key constants:
+- \`0\` = 3 o'clock (right)
+- \`HALF_PI\` = 6 o'clock (bottom) = π/2
+- \`PI\` = 9 o'clock (left) = π
+- \`TWO_PI\` = Full circle = 2π
+
+\`\`\`javascript
+function draw() {
+  background(255);
+  
+  // Quarter circle (top-right)
+  arc(200, 200, 150, 150, 0, HALF_PI);
+  
+  // Half circle (bottom)
+  arc(400, 200, 150, 150, 0, PI);
+  
+  // Three-quarter circle
+  arc(600, 200, 150, 150, 0, PI + HALF_PI);
+}
+\`\`\`
+
+## Drawing Curves
+
+p5.js provides several curve functions:
+
+### Bezier Curve
+
+\`\`\`javascript
+bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+\`\`\`
+
+- (x1, y1) = start point
+- (x2, y2) = first control point
+- (x3, y3) = second control point
+- (x4, y4) = end point`,
+            order: 3,
+          },
+          {
+            id: 'wm-y1-cm1005-m2-l4',
+            type: 'lesson',
             title: 'Transformations: translate, rotate, scale',
             contentType: 'text',
             content: `# Transformations
@@ -557,6 +601,9 @@ Think of drawing like painting on a canvas - first stroke is bottom layer, last 
 \`\`\`javascript
 function draw() {
   background(255);
+  
+  // Draw at (50, 50)
+  rect(50, 50, 50, 50);
   
   // Move origin to (200, 200)
   translate(200, 200);
@@ -572,34 +619,121 @@ function draw() {
 function draw() {
   background(255);
   
+  // Move to center
   translate(width/2, height/2);
-  rotate(PI/4);  // Rotate 45 degrees
   
+  // Rotate 45 degrees (PI/4 radians)
+  rotate(PI/4);
+  
+  // Draw rectangle - it will be rotated
   rect(-50, -50, 100, 100);
 }
 \`\`\`
 
-## push() and pop() - Save and Restore State
+## scale() - Resize the Canvas
 
 \`\`\`javascript
 function draw() {
   background(255);
   
-  rect(50, 50, 50, 50);  // Normal
+  // Draw at normal size
+  ellipse(100, 100, 50, 50);
   
-  push();  // Save state
+  // Scale by 2x
+  scale(2);
+  
+  // This will appear twice as large
+  ellipse(100, 100, 50, 50);
+}
+\`\`\`
+
+## push() and pop() - Save and Restore State
+
+Use \`push()\` and \`pop()\` to save and restore transformation state:
+
+\`\`\`javascript
+function draw() {
+  background(255);
+  
+  // First rectangle (no transformation)
+  rect(50, 50, 50, 50);
+  
+  push();  // Save current state
   translate(200, 200);
   rotate(PI/4);
-  rect(0, 0, 50, 50);  // Rotated
-  pop();  // Restore state
+  rect(0, 0, 50, 50);  // Rotated rectangle
+  pop();  // Restore previous state
   
-  rect(350, 50, 50, 50);  // Normal again
+  // Back to original state
+  rect(350, 50, 50, 50);  // Not rotated
 }
 \`\`\``,
-            order: 2,
+            order: 4,
+          },
+          {
+            id: 'wm-y1-cm1005-m2-l5',
+            type: 'lesson',
+            title: 'Animation Basics',
+            contentType: 'text',
+            content: `# Animation Basics
+
+## Using frameCount for Animation
+
+\`frameCount\` increases by 1 each frame (60 times per second):
+
+\`\`\`javascript
+function draw() {
+  background(255);
+  
+  // Circle moves from left to right
+  let x = frameCount % width;
+  ellipse(x, 200, 50, 50);
+}
+\`\`\`
+
+## Oscillating Motion
+
+Use \`sin()\` for smooth back-and-forth motion:
+
+\`\`\`javascript
+function draw() {
+  background(255);
+  
+  // Circle oscillates left and right
+  let x = width/2 + sin(frameCount * 0.05) * 150;
+  ellipse(x, 200, 50, 50);
+}
+\`\`\`
+
+## Growing and Shrinking
+
+\`\`\`javascript
+function draw() {
+  background(255);
+  
+  // Circle grows and shrinks
+  let size = 50 + sin(frameCount * 0.05) * 30;
+  ellipse(width/2, height/2, size, size);
+}
+\`\`\`
+
+## Rotating Objects
+
+\`\`\`javascript
+function draw() {
+  background(255);
+  
+  translate(width/2, height/2);
+  rotate(frameCount * 0.02);
+  
+  rect(-50, -50, 100, 100);
+}
+\`\`\``,
+            order: 5,
           },
         ],
       },
+      // WEEK 3: Variables and Data Types
       {
         id: 'wm-y1-cm1005-m3',
         type: 'module',
@@ -658,6 +792,45 @@ function draw() {
           {
             id: 'wm-y1-cm1005-m3-l2',
             type: 'lesson',
+            title: 'Variable Operations',
+            contentType: 'text',
+            content: `# Variable Operations
+
+## Updating Variables
+
+\`\`\`javascript
+let score = 0;
+score = score + 10;  // Now score is 10
+score += 5;          // Now score is 15 (shorthand)
+score++;             // Now score is 16 (increment by 1)
+\`\`\`
+
+## Common Operators
+
+- \`=\` assignment
+- \`+=\` add and assign
+- \`-=\` subtract and assign
+- \`*=\` multiply and assign
+- \`/=\` divide and assign
+- \`++\` increment by 1
+- \`--\` decrement by 1
+
+## Variable Naming Rules
+
+✅ **Good names:**
+- \`playerScore\` (camelCase)
+- \`spaceship_x\` (snake_case)
+- \`isGameOver\` (descriptive)
+
+❌ **Bad names:**
+- \`x\` (too vague)
+- \`data\` (not specific)
+- \`123abc\` (can't start with number)`,
+            order: 2,
+          },
+          {
+            id: 'wm-y1-cm1005-m3-l3',
+            type: 'lesson',
             title: 'Moving Spaceship with Variables',
             contentType: 'text',
             content: `# Moving Spaceship
@@ -691,10 +864,11 @@ function draw() {
 \`\`\`
 
 Now your spaceship moves automatically across the screen!`,
-            order: 2,
+            order: 3,
           },
         ],
       },
+      // WEEK 4: Interaction and Input
       {
         id: 'wm-y1-cm1005-m4',
         type: 'module',
@@ -789,11 +963,12 @@ Now you can control the spaceship with arrow keys!`,
           },
         ],
       },
+      // WEEK 5: Objects and Properties
       {
         id: 'wm-y1-cm1005-m5',
         type: 'module',
-        title: 'Week 5-6: Objects and Conditionals',
-        description: 'Organize code with objects and make decisions with conditionals',
+        title: 'Week 5: Objects and Properties',
+        description: 'Organize code with objects',
         order: 5,
         lessons: [
           {
@@ -844,8 +1019,18 @@ function draw() {
 \`\`\``,
             order: 1,
           },
+        ],
+      },
+      // WEEK 6: Conditional Statements
+      {
+        id: 'wm-y1-cm1005-m6',
+        type: 'module',
+        title: 'Week 6: Conditional Statements',
+        description: 'Make decisions with if/else',
+        order: 6,
+        lessons: [
           {
-            id: 'wm-y1-cm1005-m5-l2',
+            id: 'wm-y1-cm1005-m6-l1',
             type: 'lesson',
             title: 'Conditional Statements',
             contentType: 'text',
@@ -884,19 +1069,20 @@ if (distance < player.size/2 + star.size/2) {
 \`\`\`
 
 The \`dist()\` function calculates the distance between two points.`,
-            order: 2,
+            order: 1,
           },
         ],
       },
+      // WEEK 7: Arrays Basics
       {
-        id: 'wm-y1-cm1005-m6',
+        id: 'wm-y1-cm1005-m7',
         type: 'module',
-        title: 'Week 7-10: Arrays and Loops',
-        description: 'Work with collections of data and repeat actions',
-        order: 6,
+        title: 'Week 7: Arrays Basics',
+        description: 'Store multiple values in arrays',
+        order: 7,
         lessons: [
           {
-            id: 'wm-y1-cm1005-m6-l1',
+            id: 'wm-y1-cm1005-m7-l1',
             type: 'lesson',
             title: 'Arrays',
             contentType: 'text',
@@ -941,21 +1127,21 @@ function setup() {
     });
   }
 }
-
-function draw() {
-  background(0);
-  
-  for (let i = 0; i < stars.length; i++) {
-    let star = stars[i];
-    fill(255, 255, 0);
-    ellipse(star.x, star.y, star.size, star.size);
-  }
-}
 \`\`\``,
             order: 1,
           },
+        ],
+      },
+      // WEEK 8: For Loops
+      {
+        id: 'wm-y1-cm1005-m8',
+        type: 'module',
+        title: 'Week 8: For Loops',
+        description: 'Repeat actions with loops',
+        order: 8,
+        lessons: [
           {
-            id: 'wm-y1-cm1005-m6-l2',
+            id: 'wm-y1-cm1005-m8-l1',
             type: 'lesson',
             title: 'For Loops',
             contentType: 'text',
@@ -989,18 +1175,42 @@ function draw() {
     ellipse(x, 200, 40, 40);
   }
 }
-\`\`\`
+\`\`\``,
+            order: 1,
+          },
+        ],
+      },
+      // WEEK 9: Array Traversal
+      {
+        id: 'wm-y1-cm1005-m9',
+        type: 'module',
+        title: 'Week 9: Array Traversal',
+        description: 'Loop through arrays',
+        order: 9,
+        lessons: [
+          {
+            id: 'wm-y1-cm1005-m9-l1',
+            type: 'lesson',
+            title: 'Array Traversal',
+            contentType: 'text',
+            content: `# Array Traversal
 
-## Complete Game with Arrays and Loops
+## Looping Through Arrays
 
 \`\`\`javascript
-let player = { x: 400, y: 300, size: 30 };
+let numbers = [10, 20, 30, 40, 50];
+
+for (let i = 0; i < numbers.length; i++) {
+  console.log(numbers[i]);
+}
+\`\`\`
+
+## Updating Array Elements
+
+\`\`\`javascript
 let stars = [];
-let score = 0;
 
 function setup() {
-  createCanvas(800, 600);
-  
   for (let i = 0; i < 20; i++) {
     stars.push({
       x: random(width),
@@ -1013,17 +1223,11 @@ function setup() {
 function draw() {
   background(0);
   
-  // Movement
-  if (keyIsDown(LEFT_ARROW)) player.x -= 5;
-  if (keyIsDown(RIGHT_ARROW)) player.x += 5;
-  if (keyIsDown(UP_ARROW)) player.y -= 5;
-  if (keyIsDown(DOWN_ARROW)) player.y += 5;
-  
-  // Check collisions
   for (let i = 0; i < stars.length; i++) {
     let star = stars[i];
-    let distance = dist(player.x, player.y, star.x, star.y);
     
+    // Check collision with player
+    let distance = dist(player.x, player.y, star.x, star.y);
     if (distance < player.size/2 + star.size/2) {
       star.x = random(width);
       star.y = random(height);
@@ -1033,29 +1237,94 @@ function draw() {
     fill(255, 255, 0);
     ellipse(star.x, star.y, star.size, star.size);
   }
-  
-  // Draw player
-  fill(200, 200, 255);
-  ellipse(player.x, player.y, player.size, player.size);
-  
-  fill(255);
-  textSize(24);
-  text("Score: " + score, 10, 30);
 }
 \`\`\``,
-            order: 2,
+            order: 1,
           },
         ],
       },
+      // WEEK 10: Nested Loops
       {
-        id: 'wm-y1-cm1005-m7',
+        id: 'wm-y1-cm1005-m10',
         type: 'module',
-        title: 'Week 11-12: Functions',
-        description: 'Organize code into reusable functions',
-        order: 7,
+        title: 'Week 10: Nested Loops',
+        description: 'Loops within loops',
+        order: 10,
         lessons: [
           {
-            id: 'wm-y1-cm1005-m7-l1',
+            id: 'wm-y1-cm1005-m10-l1',
+            type: 'lesson',
+            title: 'Nested Loops',
+            contentType: 'text',
+            content: `# Nested Loops
+
+## Loops Within Loops
+
+\`\`\`javascript
+// Draw a grid
+for (let row = 0; row < 5; row++) {
+  for (let col = 0; col < 5; col++) {
+    let x = col * 50 + 25;
+    let y = row * 50 + 25;
+    ellipse(x, y, 40, 40);
+  }
+}
+\`\`\`
+
+## Animated Star Field
+
+\`\`\`javascript
+let stars = [];
+
+function setup() {
+  createCanvas(800, 600);
+  
+  for (let i = 0; i < 30; i++) {
+    stars.push({
+      x: random(width),
+      y: random(height),
+      size: random(10, 25),
+      speedX: random(-2, 2),
+      speedY: random(-2, 2)
+    });
+  }
+}
+
+function draw() {
+  background(0);
+  
+  for (let i = 0; i < stars.length; i++) {
+    let star = stars[i];
+    
+    // Move star
+    star.x += star.speedX;
+    star.y += star.speedY;
+    
+    // Wrap around edges
+    if (star.x < 0) star.x = width;
+    if (star.x > width) star.x = 0;
+    if (star.y < 0) star.y = height;
+    if (star.y > height) star.y = 0;
+    
+    fill(255, 255, 0);
+    ellipse(star.x, star.y, star.size, star.size);
+  }
+}
+\`\`\``,
+            order: 1,
+          },
+        ],
+      },
+      // WEEK 11: Functions Basics
+      {
+        id: 'wm-y1-cm1005-m11',
+        type: 'module',
+        title: 'Week 11: Functions Basics',
+        description: 'Create reusable code blocks',
+        order: 11,
+        lessons: [
+          {
+            id: 'wm-y1-cm1005-m11-l1',
             type: 'lesson',
             title: 'Functions',
             contentType: 'text',
@@ -1082,46 +1351,63 @@ function add(a, b) {
 let result = add(5, 3);  // result is 8
 \`\`\`
 
-## Refactored Game
+## Helper Functions
 
 \`\`\`javascript
-let player;
-let stars = [];
-let score = 0;
-
-function setup() {
-  createCanvas(800, 600);
-  player = createPlayer(400, 300);
-  
-  for (let i = 0; i < 30; i++) {
-    stars.push(createStar());
-  }
-}
-
-function draw() {
-  background(0);
-  handleInput();
-  updateStars();
-  checkCollisions();
-  drawStars();
-  drawPlayer();
-  drawScore();
-}
-
-function createPlayer(x, y) {
-  return { x: x, y: y, size: 30, speed: 5 };
-}
-
 function createStar() {
   return {
     x: random(width),
     y: random(height),
-    size: random(10, 25),
-    speedX: random(-2, 2),
-    speedY: random(-2, 2)
+    size: random(10, 25)
   };
 }
 
+function setup() {
+  createCanvas(800, 600);
+  
+  for (let i = 0; i < 20; i++) {
+    stars.push(createStar());
+  }
+}
+\`\`\``,
+            order: 1,
+          },
+        ],
+      },
+      // WEEK 12: Functions Advanced
+      {
+        id: 'wm-y1-cm1005-m12',
+        type: 'module',
+        title: 'Week 12: Functions Advanced',
+        description: 'Scope and refactoring',
+        order: 12,
+        lessons: [
+          {
+            id: 'wm-y1-cm1005-m12-l1',
+            type: 'lesson',
+            title: 'Functions Advanced',
+            contentType: 'text',
+            content: `# Functions Advanced
+
+## Variable Scope
+
+\`\`\`javascript
+let globalVar = "I'm global";
+
+function myFunction() {
+  let localVar = "I'm local";
+  console.log(globalVar);  // Works
+  console.log(localVar);   // Works
+}
+
+myFunction();
+console.log(globalVar);  // Works
+// console.log(localVar);  // ERROR!
+\`\`\`
+
+## Refactoring Game Code
+
+\`\`\`javascript
 function handleInput() {
   if (keyIsDown(LEFT_ARROW)) player.x -= player.speed;
   if (keyIsDown(RIGHT_ARROW)) player.x += player.speed;
@@ -1150,44 +1436,219 @@ function checkCollisions() {
   }
 }
 
-function drawStars() {
-  fill(255, 255, 0);
-  for (let star of stars) {
-    ellipse(star.x, star.y, star.size, star.size);
-  }
+function draw() {
+  background(0);
+  handleInput();
+  updateStars();
+  checkCollisions();
+  drawStars();
+  drawPlayer();
+  drawScore();
 }
-
-function drawPlayer() {
-  fill(200, 200, 255);
-  ellipse(player.x, player.y, player.size, player.size);
-}
-
-function drawScore() {
-  fill(255);
-  textSize(24);
-  text("Score: " + score, 10, 30);
-}
-\`\`\`
-
-Functions make code:
-- **Reusable** - Write once, use many times
-- **Organized** - Clear separation of concerns
-- **Maintainable** - Easier to debug and update`,
+\`\`\``,
             order: 1,
           },
         ],
       },
+      // WEEK 13: 2D Arrays
       {
-        id: 'wm-y1-cm1005-m8',
+        id: 'wm-y1-cm1005-m13',
         type: 'module',
-        title: 'Week 13-18: Advanced Topics',
-        description: '2D arrays, object methods, vectors, and game mechanics',
-        order: 8,
+        title: 'Week 13: 2D Arrays',
+        description: 'Arrays of arrays',
+        order: 13,
         lessons: [
           {
-            id: 'wm-y1-cm1005-m8-l1',
+            id: 'wm-y1-cm1005-m13-l1',
             type: 'lesson',
-            title: 'p5.Vector and Object Methods',
+            title: '2D Arrays',
+            contentType: 'text',
+            content: `# 2D Arrays
+
+## Arrays of Arrays
+
+\`\`\`javascript
+let grid = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9]
+];
+
+console.log(grid[1][2]);  // 6 (row 1, column 2)
+\`\`\`
+
+## Grid-Based Level
+
+\`\`\`javascript
+let player = { x: 0, y: 0, size: 30 };
+let level = [
+  [0, 0, 0, 0, 0],
+  [0, 1, 1, 0, 1],
+  [0, 1, 0, 0, 1],
+  [0, 1, 1, 1, 1],
+  [0, 0, 0, 0, 0]
+];
+
+function draw() {
+  background(0);
+  
+  let cellSize = width / level.length;
+  
+  // Draw grid
+  for (let row = 0; row < level.length; row++) {
+    for (let col = 0; col < level[row].length; col++) {
+      if (level[row][col] === 1) {
+        fill(100, 100, 150);
+      } else {
+        fill(50, 50, 80);
+      }
+      rect(col * cellSize, row * cellSize, cellSize, cellSize);
+    }
+  }
+}
+\`\`\``,
+            order: 1,
+          },
+        ],
+      },
+      // WEEK 14: Advanced Array Methods
+      {
+        id: 'wm-y1-cm1005-m14',
+        type: 'module',
+        title: 'Week 14: Advanced Array Methods',
+        description: 'map, filter, reduce',
+        order: 14,
+        lessons: [
+          {
+            id: 'wm-y1-cm1005-m14-l1',
+            type: 'lesson',
+            title: 'Advanced Array Methods',
+            contentType: 'text',
+            content: `# Advanced Array Methods
+
+## map() - Transform Each Element
+
+\`\`\`javascript
+let numbers = [1, 2, 3, 4, 5];
+let doubled = numbers.map(n => n * 2);  // [2, 4, 6, 8, 10]
+\`\`\`
+
+## filter() - Keep Elements That Pass a Test
+
+\`\`\`javascript
+let numbers = [1, 2, 3, 4, 5];
+let evens = numbers.filter(n => n % 2 === 0);  // [2, 4]
+\`\`\`
+
+## find() - Find First Element That Passes Test
+
+\`\`\`javascript
+let numbers = [1, 2, 3, 4, 5];
+let found = numbers.find(n => n > 3);  // 4
+\`\`\`
+
+## Managing Dynamic Objects
+
+\`\`\`javascript
+let stars = [];
+
+function setup() {
+  for (let i = 0; i < 20; i++) {
+    stars.push(createStar());
+  }
+}
+
+function draw() {
+  // Remove stars that are off-screen
+  stars = stars.filter(star => star.x > 0 && star.x < width);
+  
+  // Add new stars
+  if (stars.length < 20) {
+    stars.push(createStar());
+  }
+}
+\`\`\``,
+            order: 1,
+          },
+        ],
+      },
+      // WEEK 15: Object Methods
+      {
+        id: 'wm-y1-cm1005-m15',
+        type: 'module',
+        title: 'Week 15: Object Methods',
+        description: 'Methods and this keyword',
+        order: 15,
+        lessons: [
+          {
+            id: 'wm-y1-cm1005-m15-l1',
+            type: 'lesson',
+            title: 'Object Methods',
+            contentType: 'text',
+            content: `# Object Methods
+
+## Methods in Objects
+
+\`\`\`javascript
+let player = {
+  x: 400,
+  y: 300,
+  size: 30,
+  
+  move: function(dx, dy) {
+    this.x += dx;
+    this.y += dy;
+  },
+  
+  draw: function() {
+    fill(200, 200, 255);
+    ellipse(this.x, this.y, this.size, this.size);
+  }
+};
+
+player.move(5, 0);
+player.draw();
+\`\`\`
+
+## Using this Keyword
+
+\`\`\`javascript
+let enemy = {
+  x: 200,
+  y: 150,
+  speed: 2,
+  
+  update: function() {
+    this.x += this.speed;
+    
+    // Bounce off walls
+    if (this.x < 0 || this.x > width) {
+      this.speed = -this.speed;
+    }
+  },
+  
+  draw: function() {
+    fill(255, 0, 0);
+    ellipse(this.x, this.y, 30, 30);
+  }
+};
+\`\`\``,
+            order: 1,
+          },
+        ],
+      },
+      // WEEK 16: p5.Vector
+      {
+        id: 'wm-y1-cm1005-m16',
+        type: 'module',
+        title: 'Week 16: p5.Vector',
+        description: 'Vector math for smooth movement',
+        order: 16,
+        lessons: [
+          {
+            id: 'wm-y1-cm1005-m16-l1',
+            type: 'lesson',
+            title: 'p5.Vector',
             contentType: 'text',
             content: `# p5.Vector
 
@@ -1238,12 +1699,76 @@ function draw() {
 Vectors provide smooth, physics-based movement!`,
             order: 1,
           },
+        ],
+      },
+      // WEEK 17: Multiple Objects
+      {
+        id: 'wm-y1-cm1005-m17',
+        type: 'module',
+        title: 'Week 17: Multiple Objects',
+        description: 'Arrays of objects',
+        order: 17,
+        lessons: [
           {
-            id: 'wm-y1-cm1005-m8-l2',
+            id: 'wm-y1-cm1005-m17-l1',
             type: 'lesson',
-            title: 'Complete Game with Enemies',
+            title: 'Multiple Objects',
             contentType: 'text',
-            content: `# Complete Space Explorer Game
+            content: `# Multiple Objects
+
+## Arrays of Objects
+
+\`\`\`javascript
+let enemies = [];
+
+function setup() {
+  for (let i = 0; i < 5; i++) {
+    enemies.push({
+      position: createVector(random(width), random(height)),
+      velocity: createVector(random(-2, 2), random(-2, 2)),
+      size: 30
+    });
+  }
+}
+
+function draw() {
+  background(0);
+  
+  for (let enemy of enemies) {
+    enemy.position.add(enemy.velocity);
+    
+    if (enemy.position.x < 0 || enemy.position.x > width) {
+      enemy.velocity.x *= -1;
+    }
+    if (enemy.position.y < 0 || enemy.position.y > height) {
+      enemy.velocity.y *= -1;
+    }
+    
+    fill(255, 0, 0);
+    ellipse(enemy.position.x, enemy.position.y, enemy.size, enemy.size);
+  }
+}
+\`\`\``,
+            order: 1,
+          },
+        ],
+      },
+      // WEEK 18: Object Interaction
+      {
+        id: 'wm-y1-cm1005-m18',
+        type: 'module',
+        title: 'Week 18: Object Interaction',
+        description: 'Collision detection and game mechanics',
+        order: 18,
+        lessons: [
+          {
+            id: 'wm-y1-cm1005-m18-l1',
+            type: 'lesson',
+            title: 'Object Interaction',
+            contentType: 'text',
+            content: `# Object Interaction
+
+## Collision Detection
 
 \`\`\`javascript
 let player;
@@ -1251,7 +1776,6 @@ let stars = [];
 let enemies = [];
 let score = 0;
 let lives = 3;
-let gameState = 'playing';
 
 function setup() {
   createCanvas(800, 600);
@@ -1283,15 +1807,6 @@ function setup() {
 function draw() {
   background(0);
   
-  if (gameState === 'playing') {
-    updateGame();
-    drawGame();
-  } else {
-    drawGameOver();
-  }
-}
-
-function updateGame() {
   // Player movement
   if (keyIsDown(LEFT_ARROW)) player.velocity.x -= player.speed;
   if (keyIsDown(RIGHT_ARROW)) player.velocity.x += player.speed;
@@ -1300,18 +1815,6 @@ function updateGame() {
   
   player.velocity.mult(player.friction);
   player.position.add(player.velocity);
-  
-  // Update enemies
-  for (let enemy of enemies) {
-    enemy.position.add(enemy.velocity);
-    
-    if (enemy.position.x < 0 || enemy.position.x > width) {
-      enemy.velocity.x *= -1;
-    }
-    if (enemy.position.y < 0 || enemy.position.y > height) {
-      enemy.velocity.y *= -1;
-    }
-  }
   
   // Check star collisions
   for (let star of stars) {
@@ -1328,91 +1831,43 @@ function updateGame() {
     if (distance < player.size/2 + enemy.size/2) {
       lives--;
       enemy.position.set(random(width), random(height));
-      if (lives <= 0) {
-        gameState = 'gameover';
-      }
     }
   }
-}
-
-function drawGame() {
-  // Draw stars
+  
+  // Draw everything
   fill(255, 255, 0);
   for (let star of stars) {
     ellipse(star.position.x, star.position.y, star.size, star.size);
   }
   
-  // Draw enemies
   fill(255, 0, 0);
   for (let enemy of enemies) {
     ellipse(enemy.position.x, enemy.position.y, enemy.size, enemy.size);
   }
   
-  // Draw player
   fill(200, 200, 255);
   ellipse(player.position.x, player.position.y, player.size, player.size);
   
-  // Draw HUD
   fill(255);
   textSize(24);
   text("Score: " + score, 10, 30);
   text("Lives: " + lives, 10, 60);
 }
-
-function drawGameOver() {
-  fill(255);
-  textSize(48);
-  textAlign(CENTER, CENTER);
-  text("GAME OVER", width/2, height/2 - 50);
-  textSize(24);
-  text("Final Score: " + score, width/2, height/2);
-  text("Press SPACE to restart", width/2, height/2 + 50);
-}
-
-function keyPressed() {
-  if (key === ' ' && gameState === 'gameover') {
-    resetGame();
-  }
-}
-
-function resetGame() {
-  score = 0;
-  lives = 3;
-  player.position.set(400, 300);
-  player.velocity.set(0, 0);
-  
-  for (let star of stars) {
-    star.position.set(random(width), random(height));
-  }
-  
-  for (let enemy of enemies) {
-    enemy.position.set(random(width), random(height));
-  }
-  
-  gameState = 'playing';
-}
-\`\`\`
-
-This is a complete, working game with:
-- Player movement with physics
-- Collectible stars
-- Enemy obstacles
-- Score and lives system
-- Game over state
-- Restart functionality`,
-            order: 2,
+\`\`\``,
+            order: 1,
           },
         ],
       },
+      // WEEK 19: Constructor Functions
       {
-        id: 'wm-y1-cm1005-m9',
+        id: 'wm-y1-cm1005-m19',
         type: 'module',
-        title: 'Week 19-20: Constructor Functions and Final Project',
-        description: 'Use constructor functions and complete your Space Explorer game',
-        order: 9,
+        title: 'Week 19: Constructor Functions',
+        description: 'Create object instances',
+        order: 19,
         lessons: [
           {
-            id: 'wm-y1-cm1005-m9-l1',
+            id: 'wm-y1-cm1005-m19-l1',
             type: 'lesson',
             title: 'Constructor Functions',
             contentType: 'text',
@@ -1443,33 +1898,301 @@ function Player(x, y) {
   };
 }
 
-// Create player instance
+function Star() {
+  this.position = createVector(random(width), random(height));
+  this.size = random(10, 25);
+  
+  this.draw = function() {
+    fill(255, 255, 0);
+    ellipse(this.position.x, this.position.y, this.size, this.size);
+  };
+}
+
+function Enemy() {
+  this.position = createVector(random(width), random(height));
+  this.velocity = createVector(random(-2, 2), random(-2, 2));
+  this.size = 30;
+  
+  this.update = function() {
+    this.position.add(this.velocity);
+    
+    if (this.position.x < 0 || this.position.x > width) {
+      this.velocity.x *= -1;
+    }
+    if (this.position.y < 0 || this.position.y > height) {
+      this.velocity.y *= -1;
+    }
+  };
+  
+  this.draw = function() {
+    fill(255, 0, 0);
+    ellipse(this.position.x, this.position.y, this.size, this.size);
+  };
+}
+
+// Create instances
 let player = new Player(400, 300);
+let stars = [];
+let enemies = [];
+
+function setup() {
+  createCanvas(800, 600);
+  
+  for (let i = 0; i < 20; i++) {
+    stars.push(new Star());
+  }
+  
+  for (let i = 0; i < 5; i++) {
+    enemies.push(new Enemy());
+  }
+}
 
 function draw() {
   background(0);
+  
   player.update();
   player.draw();
+  
+  for (let star of stars) {
+    star.draw();
+  }
+  
+  for (let enemy of enemies) {
+    enemy.update();
+    enemy.draw();
+  }
+}
+\`\`\``,
+            order: 1,
+          },
+        ],
+      },
+      // WEEK 20: Final Project
+      {
+        id: 'wm-y1-cm1005-m20',
+        type: 'module',
+        title: 'Week 20: Final Project',
+        description: 'Complete Space Explorer game',
+        order: 20,
+        lessons: [
+          {
+            id: 'wm-y1-cm1005-m20-l1',
+            type: 'lesson',
+            title: 'Final Project: Complete Space Explorer',
+            contentType: 'text',
+            content: `# Final Project: Complete Space Explorer Game
+
+Congratulations! You've reached the final week. Now it's time to put everything together and create a complete, polished game.
+
+## Complete Game Code
+
+\`\`\`javascript
+// Constructor functions
+function Player(x, y) {
+  this.position = createVector(x, y);
+  this.velocity = createVector(0, 0);
+  this.size = 30;
+  this.speed = 0.5;
+  
+  this.update = function() {
+    if (keyIsDown(LEFT_ARROW)) this.velocity.x -= this.speed;
+    if (keyIsDown(RIGHT_ARROW)) this.velocity.x += this.speed;
+    if (keyIsDown(UP_ARROW)) this.velocity.y -= this.speed;
+    if (keyIsDown(DOWN_ARROW)) this.velocity.y += this.speed;
+    
+    this.velocity.mult(0.95);
+    this.position.add(this.velocity);
+    this.position.x = constrain(this.position.x, 0, width);
+    this.position.y = constrain(this.position.y, 0, height);
+  };
+  
+  this.draw = function() {
+    fill(200, 200, 255);
+    ellipse(this.position.x, this.position.y, this.size, this.size);
+  };
+}
+
+function Star() {
+  this.position = createVector(random(width), random(height));
+  this.size = random(10, 25);
+  
+  this.draw = function() {
+    fill(255, 255, 0);
+    ellipse(this.position.x, this.position.y, this.size, this.size);
+  };
+}
+
+function Enemy() {
+  this.position = createVector(random(width), random(height));
+  this.velocity = createVector(random(-2, 2), random(-2, 2));
+  this.size = 30;
+  
+  this.update = function() {
+    this.position.add(this.velocity);
+    
+    if (this.position.x < 0 || this.position.x > width) {
+      this.velocity.x *= -1;
+    }
+    if (this.position.y < 0 || this.position.y > height) {
+      this.velocity.y *= -1;
+    }
+  };
+  
+  this.draw = function() {
+    fill(255, 0, 0);
+    ellipse(this.position.x, this.position.y, this.size, this.size);
+  };
+}
+
+// Game variables
+let player;
+let stars = [];
+let enemies = [];
+let score = 0;
+let lives = 3;
+let gameState = 'start'; // 'start', 'playing', 'gameover'
+
+function setup() {
+  createCanvas(800, 600);
+  resetGame();
+}
+
+function draw() {
+  background(0);
+  
+  if (gameState === 'start') {
+    drawStartScreen();
+  } else if (gameState === 'playing') {
+    updateGame();
+    drawGame();
+  } else if (gameState === 'gameover') {
+    drawGameOver();
+  }
+}
+
+function updateGame() {
+  player.update();
+  
+  for (let enemy of enemies) {
+    enemy.update();
+  }
+  
+  // Check star collisions
+  for (let i = stars.length - 1; i >= 0; i--) {
+    let distance = p5.Vector.dist(player.position, stars[i].position);
+    if (distance < player.size/2 + stars[i].size/2) {
+      stars.splice(i, 1);
+      stars.push(new Star());
+      score += 10;
+    }
+  }
+  
+  // Check enemy collisions
+  for (let enemy of enemies) {
+    let distance = p5.Vector.dist(player.position, enemy.position);
+    if (distance < player.size/2 + enemy.size/2) {
+      lives--;
+      enemy.position.set(random(width), random(height));
+      if (lives <= 0) {
+        gameState = 'gameover';
+      }
+    }
+  }
+}
+
+function drawGame() {
+  for (let star of stars) {
+    star.draw();
+  }
+  
+  for (let enemy of enemies) {
+    enemy.draw();
+  }
+  
+  player.draw();
+  
+  // HUD
+  fill(255);
+  textSize(24);
+  textAlign(LEFT, TOP);
+  text("Score: " + score, 10, 10);
+  text("Lives: " + lives, 10, 40);
+}
+
+function drawStartScreen() {
+  fill(255);
+  textSize(48);
+  textAlign(CENTER, CENTER);
+  text("SPACE EXPLORER", width/2, height/2 - 80);
+  
+  textSize(24);
+  text("Collect stars, avoid enemies!", width/2, height/2 - 20);
+  text("Use arrow keys to move", width/2, height/2 + 20);
+  
+  textSize(20);
+  text("Press SPACE to start", width/2, height/2 + 80);
+}
+
+function drawGameOver() {
+  fill(255);
+  textSize(48);
+  textAlign(CENTER, CENTER);
+  text("GAME OVER", width/2, height/2 - 50);
+  
+  textSize(24);
+  text("Final Score: " + score, width/2, height/2);
+  text("Press SPACE to restart", width/2, height/2 + 50);
+}
+
+function keyPressed() {
+  if (key === ' ') {
+    if (gameState === 'start' || gameState === 'gameover') {
+      resetGame();
+      gameState = 'playing';
+    }
+  }
+}
+
+function resetGame() {
+  player = new Player(400, 300);
+  
+  stars = [];
+  for (let i = 0; i < 20; i++) {
+    stars.push(new Star());
+  }
+  
+  enemies = [];
+  for (let i = 0; i < 5; i++) {
+    enemies.push(new Enemy());
+  }
+  
+  score = 0;
+  lives = 3;
 }
 \`\`\`
 
-## Benefits of Constructors
+## What You've Accomplished
 
-- **Reusability** - Create multiple instances easily
-- **Organization** - Group related data and behavior
-- **Maintainability** - Update in one place
+✅ Variables and data types
+✅ Conditional logic
+✅ Arrays and loops
+✅ Functions and scope
+✅ Objects and methods
+✅ Constructor functions
+✅ Collision detection
+✅ Game state management
+✅ Vector-based physics
+✅ Complete game development
 
-## Final Project
+## Next Steps
 
-Your Space Explorer game is now complete! It includes:
-- Constructor functions for game entities
-- Vector-based physics
-- Collision detection
-- Score and lives system
-- Multiple game states
-- Smooth animations
+You're now ready to:
+- Continue to CM1010: Introduction to Programming II
+- Explore more advanced topics
+- Build your own projects
+- Contribute to open source
 
-**Congratulations!** You've completed CM1005!`,
+**Congratulations on completing CM1005!** 🎉`,
             order: 1,
           },
         ],
