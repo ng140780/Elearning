@@ -30,6 +30,7 @@ const DEFAULT_STATE: LearnerState = {
   bookmarks: [],
   history: [],
   settings: DEFAULT_SETTINGS,
+  enrolledCourses: [],
 };
 
 /** Load the complete learner state from storage */

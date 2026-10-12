@@ -9,7 +9,7 @@ import EmptyState from '../components/ui/EmptyState';
 export default function LearningEnvironment() {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
   const navigate = useNavigate();
-  const { isLessonCompleted, markLessonComplete, markLessonIncomplete, recordAccess, addToHistory, isBookmarked, toggleBookmark } = useLearner();
+  const { isLessonCompleted, markLessonComplete, markLessonIncomplete, recordAccess, addToHistory, isBookmarked, toggleBookmark, isEnrolled } = useLearner();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [expandedModules, setExpandedModules] = useState<Record<string, boolean>>({});
 
@@ -17,8 +17,15 @@ export default function LearningEnvironment() {
   const course = courseId ? getCourseById(courseId) : null;
   const completed = lessonId ? isLessonCompleted(lessonId) : false;
   const bookmarked = lessonId ? isBookmarked(lessonId, 'lesson') : false;
+  const enrolled = courseId ? isEnrolled(courseId) : false;
 
   useEffect(() => {
+    // Check if user is enrolled
+    if (courseId && !enrolled) {
+      navigate(`/courses/${courseId}`, { replace: true });
+      return;
+    }
+
     if (courseId && lessonId && course) {
       recordAccess(lessonId, courseId);
       addToHistory({

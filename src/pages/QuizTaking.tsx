@@ -21,7 +21,7 @@ interface QuizAttempt {
 export default function QuizTaking() {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
   const navigate = useNavigate();
-  const { addToHistory } = useLearner();
+  const { addToHistory, isEnrolled } = useLearner();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | number>>({});
@@ -30,6 +30,12 @@ export default function QuizTaking() {
   const [quizContext, setQuizContext] = useState<any>(null);
 
   useEffect(() => {
+    // Check if user is enrolled
+    if (courseId && !isEnrolled(courseId)) {
+      navigate(`/courses/${courseId}`, { replace: true });
+      return;
+    }
+
     if (courseId && lessonId) {
       const context = getLessonWithContext(courseId, lessonId);
       if (context && context.lesson.contentType === 'quiz' && context.lesson.quizQuestions) {

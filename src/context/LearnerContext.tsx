@@ -17,6 +17,9 @@ export interface LearnerAPI {
   isBookmarked: (targetId: LearningUnitId, type: 'course' | 'lesson' | 'learning-path') => boolean;
   isLessonCompleted: (lessonId: LearningUnitId) => boolean;
   removeCourseProgress: (courseId: LearningUnitId) => void;
+  enrollCourse: (courseId: string) => void;
+  unenrollCourse: (courseId: string) => void;
+  isEnrolled: (courseId: string) => boolean;
   clearData: () => void;
 }
 
@@ -47,6 +50,9 @@ export function useLearner(): LearnerAPI {
     isBookmarked: (targetId, type) => learnerStore.isBookmarked(targetId, type),
     isLessonCompleted: (lessonId) => learnerStore.isLessonCompleted(lessonId),
     removeCourseProgress: (courseId) => learnerStore.removeCourseProgress(courseId),
+    enrollCourse: (courseId) => learnerStore.enrollCourse(courseId),
+    unenrollCourse: (courseId) => learnerStore.unenrollCourse(courseId),
+    isEnrolled: (courseId) => learnerStore.isEnrolled(courseId),
     clearData: () => learnerStore.clearData(),
   };
 }

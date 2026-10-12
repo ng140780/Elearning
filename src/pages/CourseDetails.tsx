@@ -10,12 +10,13 @@ import { useEffect, useState } from 'react';
 export default function CourseDetails() {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  const { isBookmarked, toggleBookmark, isLessonCompleted, removeCourseProgress } = useLearner();
+  const { isBookmarked, toggleBookmark, isLessonCompleted, removeCourseProgress, isEnrolled, enrollCourse, unenrollCourse } = useLearner();
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
 
   const course = courseId ? getCourseById(courseId) : undefined;
   const progress = course ? getFullCourseProgress(course) : null;
   const bookmarked = courseId ? isBookmarked(courseId, 'course') : false;
+  const enrolled = courseId ? isEnrolled(courseId) : false;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -60,6 +61,20 @@ export default function CourseDetails() {
   const handleRemoveCourse = () => {
     if (courseId) {
       removeCourseProgress(courseId);
+      setShowRemoveConfirm(false);
+      navigate('/courses');
+    }
+  };
+
+  const handleEnroll = () => {
+    if (courseId) {
+      enrollCourse(courseId);
+    }
+  };
+
+  const handleUnenroll = () => {
+    if (courseId) {
+      unenrollCourse(courseId);
       setShowRemoveConfirm(false);
       navigate('/courses');
     }
@@ -134,17 +149,39 @@ export default function CourseDetails() {
                   </div>
                 )}
 
-                <button
-                  onClick={handleStartLearning}
-                  className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors mb-3"
-                >
-                  <Play className="w-5 h-5" />
-                  {isCompleted ? 'Review Course' : hasStarted ? 'Continue Learning' : 'Start Learning'}
-                </button>
+                {!enrolled ? (
+                  // Not enrolled - show enroll button
+                  <button
+                    onClick={handleEnroll}
+                    className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors mb-3"
+                  >
+                    <Play className="w-5 h-5" />
+                    Enroll in Course
+                  </button>
+                ) : (
+                  // Enrolled - show start/continue/review and drop buttons
+                  <>
+                    <button
+                      onClick={handleStartLearning}
+                      className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors mb-3"
+                    >
+                      <Play className="w-5 h-5" />
+                      {isCompleted ? 'Review Course' : hasStarted ? 'Continue Learning' : 'Start Learning'}
+                    </button>
+
+                    <button
+                      onClick={() => setShowRemoveConfirm(true)}
+                      className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-lg font-medium transition-colors border border-red-200 text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                      Drop Course
+                    </button>
+                  </>
+                )}
 
                 <button
                   onClick={handleBookmark}
-                  className={`w-full flex items-center justify-center gap-2 px-5 py-3 rounded-lg font-medium transition-colors border ${
+                  className={`w-full flex items-center justify-center gap-2 px-5 py-3 mt-3 rounded-lg font-medium transition-colors border ${
                     bookmarked
                       ? 'bg-primary-50 border-primary-200 text-primary-700'
                       : 'bg-white border-surface-200 text-surface-700 hover:bg-surface-50'
@@ -153,23 +190,13 @@ export default function CourseDetails() {
                   {bookmarked ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
                   {bookmarked ? 'Bookmarked' : 'Bookmark'}
                 </button>
-
-                {hasStarted && (
-                  <button
-                    onClick={() => setShowRemoveConfirm(true)}
-                    className="w-full flex items-center justify-center gap-2 px-5 py-3 mt-3 rounded-lg font-medium transition-colors border border-red-200 text-red-600 hover:bg-red-50"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                    Remove from My Learning
-                  </button>
-                )}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Remove Course Confirmation Modal */}
+      {/* Drop Course Confirmation Modal */}
       {showRemoveConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-6 max-w-md w-full">
@@ -177,20 +204,20 @@ export default function CourseDetails() {
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                 <Trash2 className="w-5 h-5 text-red-600" />
               </div>
-              <h3 className="text-lg font-bold text-surface-900">Remove Course</h3>
+              <h3 className="text-lg font-bold text-surface-900">Drop Course</h3>
             </div>
             <p className="text-surface-600 mb-2">
-              Are you sure you want to remove <strong>{course.title}</strong> from your learning?
+              Are you sure you want to drop <strong>{course.title}</strong>?
             </p>
             <p className="text-red-600 text-sm font-medium mb-4">
-              ⚠️ This will delete all your progress, bookmarks, and history for this course. This action cannot be undone.
+              ⚠️ This will unenroll you from the course and delete all your progress, bookmarks, and history. You will need to re-enroll to access the course again. This action cannot be undone.
             </p>
             <div className="flex gap-2">
               <button
-                onClick={handleRemoveCourse}
+                onClick={handleUnenroll}
                 className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700"
               >
-                Yes, Remove
+                Yes, Drop Course
               </button>
               <button
                 onClick={() => setShowRemoveConfirm(false)}
